@@ -64,3 +64,42 @@ http://fauzan-putra31-djogjakarya.pbp.cs.ui.ac.id/
 
 ## 🔗 Link Dataset
 https://docs.google.com/spreadsheets/d/1TRI-ySJPl8-Z4J7OobiPfDs0FSshw3zxEH8qmNUL3Xw/edit?gid=0#gid=0
+
+### Alur Pengintegrasian Django dengan Flutter
+
+#### **1. Persiapan Backend Django**
+1. **Membuat Endpoint Django**  
+   - Siapkan endpoint yang dapat mengirimkan data dalam format JSON untuk setiap data yang dibutuhkan, seperti daftar buku atau produk. Endpoint ini akan diakses oleh aplikasi Flutter.
+   
+2. **Menambahkan Middleware**  
+   - Tambahkan middleware seperti CORS di Django untuk memastikan API dapat diakses dari aplikasi Flutter tanpa masalah lintas asal (cross-origin).
+
+3. **Mengatur Autentikasi**  
+   - Pastikan sistem login, logout, dan registrasi pada backend sudah berfungsi. Gunakan mekanisme autentikasi berbasis cookie atau token untuk memastikan keamanan setiap permintaan data.
+
+#### **2. Persiapan Proyek Flutter**
+1. **Menambahkan Library Pendukung**  
+   - Tambahkan library seperti http untuk komunikasi dengan backend dan pbp_django_auth untuk mengelola autentikasi berbasis cookie.
+
+2. **Membuat Utility untuk Pengambilan Data**  
+   - Siapkan file khusus di proyek Flutter untuk menangani proses pengambilan data dari endpoint Django. Fungsi dalam file ini bertugas untuk melakukan permintaan HTTP ke server Django.
+
+3. **Mengubah Data JSON menjadi Objek Dart**  
+   - Gunakan layanan seperti quicktype.io untuk mengonversi data JSON dari endpoint menjadi model Dart yang dapat digunakan di aplikasi.
+
+#### **3. Pengolahan Data di Flutter**
+1. **Mengambil Data dari Backend**  
+   - Panggil fungsi dari file utility di widget yang memerlukan data. Data yang diterima akan diolah sesuai kebutuhan untuk ditampilkan ke pengguna.
+
+2. **Mengirim Data ke Backend**  
+   - Untuk fitur seperti menambah atau memperbarui data, kirim permintaan POST atau PUT ke endpoint Django melalui file utility.
+
+#### **4. Pengintegrasian dan Pengujian**
+1. **Menghubungkan Frontend dan Backend**  
+   - Pastikan semua endpoint Django telah terhubung dengan fungsi di Flutter. Cek apakah autentikasi berfungsi dengan baik untuk permintaan yang membutuhkan akses terbatas.
+
+2. **Pengujian End-to-End**  
+   - Lakukan pengujian untuk memastikan data dapat:
+     - Diambil dari backend dan ditampilkan di aplikasi.
+     - Dikirim dari aplikasi ke backend untuk disimpan di database.
+   - Pastikan semua proses berjalan aman, termasuk autentikasi dan otorisasi.
