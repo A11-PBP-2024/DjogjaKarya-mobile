@@ -24,17 +24,13 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   List<Product> products = [];
   List<Product> filteredProducts = [];
   bool isLoading = true;
-  String? selectedLetter;
-  String? selectedPriceRange;
+  String? selectedAlphabetSort;
+  String? selectedPriceSort;
   TextEditingController searchController = TextEditingController();
   final ApiService apiService = ApiService(baseUrl: "http://localhost:8000");
 
-  // Simplified price ranges
-  final List<String> priceRanges = [
-    'Murah',     // Cheaper options
-    'Sedang',    // Mid-range
-    'Mahal',     // Expensive
-  ];
+  final List<String> alphabetSortOptions = ['A-Z', 'Z-A'];
+  final List<String> priceSortOptions = ['Lowest Price', 'Highest Price'];
 
   @override
   void initState() {
@@ -64,157 +60,150 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     }
   }
 
+  void _applySorting() {
+    setState(() {
+      if (selectedAlphabetSort != null) {
+        switch (selectedAlphabetSort) {
+          case 'A-Z':
+            filteredProducts.sort((a, b) => a.name.compareTo(b.name));
+            break;
+          case 'Z-A':
+            filteredProducts.sort((a, b) => b.name.compareTo(a.name));
+            break;
+        }
+      }
+
+      if (selectedPriceSort != null) {
+        switch (selectedPriceSort) {
+          case 'Highest Price':
+            filteredProducts.sort((a, b) => b.harga.compareTo(a.harga));
+            break;
+          case 'Lowest Price':
+            filteredProducts.sort((a, b) => a.harga.compareTo(b.harga));
+            break;
+        }
+      }
+    });
+  }
+
   void _applyFilters() {
     List<Product> result = List.from(products);
 
-    // Apply text search filter
     if (searchController.text.isNotEmpty) {
       result = result.where((product) => 
         product.name.toLowerCase().contains(searchController.text.toLowerCase())
       ).toList();
     }
 
-    // Apply letter filter
-    if (selectedLetter != null) {
-      result = result.where((product) => 
-        product.name.toUpperCase().startsWith(selectedLetter!)
-      ).toList();
-    }
-
-    // Apply simplified price filter
-    if (selectedPriceRange != null) {
-      // Sort products by price to determine ranges
-      final sortedProducts = List.from(products);
-      sortedProducts.sort((a, b) => a.price.compareTo(b.price));
-      
-      final int totalProducts = sortedProducts.length;
-      final int rangeSize = (totalProducts / 3).ceil();
-
-      result = result.where((product) {
-        final index = sortedProducts.indexOf(product);
-        switch (selectedPriceRange) {
-          case 'Murah':
-            return index < rangeSize;
-          case 'Sedang':
-            return index >= rangeSize && index < rangeSize * 2;
-          case 'Mahal':
-            return index >= rangeSize * 2;
-          default:
-            return true;
-        }
-      }).toList();
-    }
-
     setState(() {
       filteredProducts = result;
     });
+    
+    if (selectedAlphabetSort != null || selectedPriceSort != null) {
+      _applySorting();
+    }
   }
 
   void _clearFilters() {
     setState(() {
       searchController.clear();
-      selectedLetter = null;
-      selectedPriceRange = null;
-      filteredProducts = products;
+      selectedAlphabetSort = null;
+      selectedPriceSort = null;
+      filteredProducts = List.from(products);
     });
   }
 
   Widget _buildFilters() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Search TextField
           TextField(
             controller: searchController,
             decoration: InputDecoration(
               hintText: 'Search products...',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             onChanged: (_) => _applyFilters(),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           
-          // Dropdowns row
           Row(
             children: [
-              // Alphabet dropdown
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: selectedLetter,
+                  value: selectedAlphabetSort,
                   decoration: InputDecoration(
-                    labelText: 'Filter by letter',
+                    labelText: 'Sort by Alphabet',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                   items: [
-                    DropdownMenuItem<String>(
+                    const DropdownMenuItem<String>(
                       value: null,
-                      child: Text('All letters'),
+                      child: Text('None'),
                     ),
-                    ...List.generate(26, (index) => 
-                      DropdownMenuItem(
-                        value: String.fromCharCode(65 + index),
-                        child: Text(String.fromCharCode(65 + index)),
-                      )
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedLetter = value;
-                    });
-                    _applyFilters();
-                  },
-                ),
-              ),
-              SizedBox(width: 16),
-              // Simplified price range dropdown
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: selectedPriceRange,
-                  decoration: InputDecoration(
-                    labelText: 'Filter by price',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                  items: [
-                    DropdownMenuItem<String>(
-                      value: null,
-                      child: Text('All prices'),
-                    ),
-                    ...priceRanges.map((range) => DropdownMenuItem(
-                      value: range,
-                      child: Text(range),
+                    ...alphabetSortOptions.map((option) => DropdownMenuItem(
+                      value: option,
+                      child: Text(option),
                     )),
                   ],
                   onChanged: (value) {
                     setState(() {
-                      selectedPriceRange = value;
+                      selectedAlphabetSort = value;
+                      selectedPriceSort = null;
                     });
-                    _applyFilters();
+                    if (value != null) _applySorting();
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: selectedPriceSort,
+                  decoration: InputDecoration(
+                    labelText: 'Sort by Price',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('None'),
+                    ),
+                    ...priceSortOptions.map((option) => DropdownMenuItem(
+                      value: option,
+                      child: Text(option),
+                    )),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedPriceSort = value;
+                      selectedAlphabetSort = null;
+                    });
+                    if (value != null) _applySorting();
                   },
                 ),
               ),
             ],
           ),
           
-          // Clear filters button
           if (searchController.text.isNotEmpty || 
-              selectedLetter != null || 
-              selectedPriceRange != null)
+              selectedAlphabetSort != null || 
+              selectedPriceSort != null)
             Padding(
-              padding: EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.only(top: 16),
               child: TextButton.icon(
-                icon: Icon(Icons.clear),
-                label: Text('Clear all filters'),
+                icon: const Icon(Icons.clear),
+                label: const Text('Clear filters'),
                 onPressed: _clearFilters,
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.red,
@@ -227,19 +216,19 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   }
 
   Future<void> _onDeleteProduct(Product product) async {
-    final confirm = await showDialog(
+    final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Confirmation"),
+        title: const Text("Confirmation"),
         content: Text("Are you sure want to delete ${product.name}?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text("No"),
+            child: const Text("No"),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text("Yes"),
+            child: const Text("Yes"),
           ),
         ],
       ),
@@ -287,7 +276,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     if (isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.categoryName)),
-        body: Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -303,11 +292,11 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  icon: Icon(Icons.add),
-                  label: Text('Add Product'),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add Product'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.brown[700],
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -319,7 +308,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
           _buildFilters(),
           Expanded(
             child: filteredProducts.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text(
                       "No products found with current filters",
                       style: TextStyle(fontSize: 16),
@@ -328,7 +317,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                 : GridView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: filteredProducts.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,

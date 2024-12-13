@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '/models/product.dart';
-import '/screens/products/edit_product_screen.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -16,131 +16,157 @@ class ProductCard extends StatelessWidget {
     required this.onEdit,
   }) : super(key: key);
 
+  String formatPrice(int price) {
+    final formatter = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    return price.toString().replaceAllMapped(
+      formatter, 
+      (Match m) => '${m[1]}.'
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () {
-        // Tambahkan onPressed event jika diperlukan
-      },
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(140, 220),
-        maximumSize: const Size(140, 220),
-        padding: const EdgeInsets.all(8),
-      ),
-      child: Column(
-        children: [
-          // Image Section with AspectRatio
-          AspectRatio(
-            aspectRatio: 1.15,
-            child: Stack(
-              children: [
-                // Product Image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    product.image,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[300],
-                      child: Icon(Icons.error),
-                    ),
-                  ),
-                ),
-                // Discount Badge (if needed)
-                if (isAdmin)
-                  Positioned(
-                    right: 4,
-                    top: 4,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                iconSize: 20,
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(
-                                  minWidth: 30,
-                                  minHeight: 30,
-                                ),
-                                icon: Icon(Icons.edit, color: Colors.orange),
-                                onPressed: onEdit,
-                              ),
-                              IconButton(
-                                iconSize: 20,
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(
-                                  minWidth: 30,
-                                  minHeight: 30,
-                                ),
-                                icon: Icon(Icons.delete, color: Colors.red),
-                                onPressed: onDelete,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
+    // Mendapatkan lebar layar
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Mengatur lebar kartu sebagai persentase dari lebar layar
+    final cardWidth = screenWidth * 0.45; // 45% dari lebar layar
+    // Mengatur tinggi kartu berdasarkan lebar
+    final cardHeight = cardWidth * 1.6; // Rasio 1:1.6
+
+    return SizedBox(
+      width: cardWidth,
+      height: cardHeight,
+      child: OutlinedButton(
+        onPressed: () {
+          // Tambahkan onPressed event jika diperlukan
+        },
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.all(8),
+          backgroundColor: Colors.brown[100], // Warna latar belakang coklat muda
+          side: BorderSide(color: Colors.grey.shade200),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          
-          // Product Details Section
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 8,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        child: Column(
+          children: [
+            // Bagian gambar dengan rasio aspek tetap
+            AspectRatio(
+              aspectRatio: 1.15,
+              child: Stack(
                 children: [
-                  // Store name in uppercase
-                  Text(
-                    product.toko.toUpperCase(),
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontSize: 10,
-                      color: Colors.grey[600],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: product.image,
+                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.error),
+                      ),
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  
-                  // Product name
-                  Text(
-                    product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                  if (isAdmin)
+                    Positioned(
+                      right: 4,
+                      top: 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              iconSize: 20,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 30,
+                                minHeight: 30,
+                              ),
+                              icon: const Icon(Icons.edit, color: Colors.orange),
+                              onPressed: onEdit,
+                            ),
+                            IconButton(
+                              iconSize: 20,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 30,
+                                minHeight: 30,
+                              ),
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: onDelete,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                  
-                  const Spacer(),
-                  
-                  // Price
-                  Text(
-                    "Rp${product.harga.toString()}",
-                    style: const TextStyle(
-                      color: Color(0xFF31B0D8),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                    ),
-                  ),
                 ],
               ),
             ),
-          ),
-        ],
+            
+            // Bagian informasi produk
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Nama toko
+                    Text(
+                      product.toko.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    
+                    // Nama produk
+                    Flexible(
+                      child: Text(
+                        product.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    
+                    // Harga
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.brown[200], // Warna latar belakang label harga
+                      ),
+                      child: Text(
+                        "Rp${formatPrice(product.harga)}",
+                        style: TextStyle(
+                          color: Colors.brown[700],
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
