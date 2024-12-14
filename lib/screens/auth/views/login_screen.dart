@@ -3,6 +3,8 @@ import 'package:shop/constants.dart';
 import 'package:shop/route/route_constants.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -103,8 +105,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
 
                         if (request.loggedIn) {
-                          String message = response['message'];
+                           String message = response['message'];
                           String uname = response['username'];
+                          bool isAdmin = response['is_admin'] ?? false;  // Ambil status admin
+                          
+                          // Simpan status login dan admin
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setBool('isLoggedIn', true);
+                          await prefs.setString('username', uname);
+                          await prefs.setBool('isAdmin', isAdmin); 
+                          
                           if (context.mounted) {
                             Navigator.pushNamedAndRemoveUntil(
                               context,

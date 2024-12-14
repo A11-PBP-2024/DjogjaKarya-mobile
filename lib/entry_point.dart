@@ -14,7 +14,7 @@ class EntryPoint extends StatefulWidget {
 class _EntryPointState extends State<EntryPoint> {
   final List _pages = const [
     HomeScreen(),
-    HomeScreen(),
+    CategoriesScreen(),
     HomeScreen(),
     HomeScreen(),
     HomeScreen(),
@@ -127,7 +127,7 @@ class _EntryPointState extends State<EntryPoint> {
               icon: svgIcon("assets/icons/Category.svg"),
               activeIcon:
                   svgIcon("assets/icons/Category.svg", color: primaryColor),
-              label: "Discover",
+              label: "Products",
             ),
             BottomNavigationBarItem(
               icon: svgIcon("assets/icons/Bookmark.svg"),
