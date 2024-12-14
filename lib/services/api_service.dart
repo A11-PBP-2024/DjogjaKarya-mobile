@@ -33,9 +33,4 @@ class ApiService {
     }
   }
 
-  Future<bool> deleteProduct(int id) async {
-    final uri = Uri.parse("$baseUrl/product/delete-product-flutter/$id/");
-    final response = await http.post(uri);
-    return response.statusCode == 200;
-  }
 }

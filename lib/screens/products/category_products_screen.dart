@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 import '/models/product.dart';
 import '/services/api_service.dart';
 import '/screens/products/widgets/product_card.dart';
 import '/screens/products/add_product_screen.dart';
 import '/screens/products/edit_product_screen.dart';
+import 'package:provider/provider.dart';
 
 class CategoryProductsScreen extends StatefulWidget {
   final String categoryName;
@@ -216,6 +218,8 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   }
 
   Future<void> _onDeleteProduct(Product product) async {
+    final request = context.read<CookieRequest>();
+    
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -235,15 +239,33 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     );
 
     if (confirm == true) {
-      bool success = await apiService.deleteProduct(product.id);
-      if (success) {
-        setState(() {
-          products.remove(product);
-          _applyFilters();
-        });
+      try {
+        final response = await request.post(
+          "http://localhost:8000/product/delete-product-flutter/${product.id}/",
+          {},  // empty body karena delete
+        );
+        
+        if (response['message'] != null) {  // atau sesuaikan dengan response dari Django
+          setState(() {
+            products.remove(product);
+            _applyFilters();
+          });
+          
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Product deleted successfully")),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error deleting product: $e")),
+          );
+        }
       }
     }
-  }
+}
 
   Future<void> _onEditProduct(Product product) async {
     final result = await Navigator.push(

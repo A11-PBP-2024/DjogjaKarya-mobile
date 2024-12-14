@@ -1,31 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:shop/route/route_constants.dart';
-// import 'package:shop/route/router.dart' as router;
-// import 'package:shop/theme/app_theme.dart';
-
-// void main() {
-//   runApp(const MyApp());
-// }
-
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Shop Template by The Flutter Way',
-//       theme: AppTheme.lightTheme(context),
-//       // Dark theme is inclided in the Full template
-//       themeMode: ThemeMode.light,
-//       onGenerateRoute: router.generateRoute,
-//       initialRoute: onbordingScreenRoute,
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:shop/route/route_constants.dart';
 import 'package:shop/route/router.dart' as router;
@@ -33,13 +5,13 @@ import 'package:shop/theme/app_theme.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert'; // Untuk jsonEncode dan jsonDecode
+import 'dart:convert'; // For jsonEncode and jsonDecode
 
 void main() async {
-  // Pastikan binding diinisialisasi
+  // Ensure bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Cek status login
+  // Check login status
   final prefs = await SharedPreferences.getInstance();
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
@@ -60,8 +32,15 @@ Future<void> _restoreCookies(CookieRequest cookieRequest) async {
   final prefs = await SharedPreferences.getInstance();
   final cookiesString = prefs.getString('cookies');
   if (cookiesString != null) {
-    // Jika cookies diharapkan dalam format JSON
-    final cookiesMap = jsonDecode(cookiesString);
+    // Decode the JSON string to a Map<String, dynamic>
+    final decodedMap = jsonDecode(cookiesString) as Map<String, dynamic>;
+
+    // Convert Map<String, dynamic> to Map<String, Cookie>
+    final cookiesMap = decodedMap.map((key, value) {
+      return MapEntry(key, Cookie.fromJson(value));
+    });
+
+    // Assign the correctly typed Map to cookieRequest.cookies
     cookieRequest.cookies = cookiesMap;
   }
 }
@@ -82,22 +61,26 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme(context),
       themeMode: ThemeMode.light,
       onGenerateRoute: router.generateRoute,
-      // Tentukan initial route berdasarkan status login
+      // Determine initial route based on login status
       initialRoute: isLoggedIn ? entryPointRoute : onbordingScreenRoute,
     );
   }
 }
 
-// Helper function untuk menyimpan status login
+// Helper function to save login status
 Future<void> saveLoginStatus(CookieRequest cookieRequest) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setBool('isLoggedIn', true);
-  // Simpan cookies dalam format JSON
-  final cookiesString = jsonEncode(cookieRequest.cookies);
+
+  // Convert Map<String, Cookie> to Map<String, dynamic> for JSON encoding
+  final cookiesMap = cookieRequest.cookies.map((key, cookie) => MapEntry(key, cookie.toJson()));
+
+  // Encode the cookies map to a JSON string
+  final cookiesString = jsonEncode(cookiesMap);
   await prefs.setString('cookies', cookiesString);
 }
 
-// Helper function untuk logout
+// Helper function to logout
 Future<void> clearLoginStatus() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setBool('isLoggedIn', false);
