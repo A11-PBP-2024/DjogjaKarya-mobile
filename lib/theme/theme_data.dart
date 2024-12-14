@@ -25,7 +25,7 @@ const AppBarTheme appBarDarkTheme = AppBarTheme(
 );
 
 ScrollbarThemeData scrollbarThemeData = ScrollbarThemeData(
-  trackColor: MaterialStateProperty.all(primaryColor),
+  trackColor: MaterialStateProperty.all(const Color.fromARGB(255, 104, 82, 82)),
 );
 
 DataTableThemeData dataTableLightThemeData = DataTableThemeData(

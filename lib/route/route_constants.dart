@@ -57,3 +57,7 @@ const String cartScreenRoute = "cart";
 const String paymentMethodScreenRoute = "payment_method";
 const String addNewCardScreenRoute = "add_new_card";
 const String thanksForOrderScreenRoute = "thanks_order";
+
+
+// tambahin ya
+const String entryPointRoute = '/entry-point';
