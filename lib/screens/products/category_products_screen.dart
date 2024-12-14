@@ -221,22 +221,29 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     final request = context.read<CookieRequest>();
     
     final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Confirmation"),
-        content: Text("Are you sure want to delete ${product.name}?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("No"),
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Yes"),
+          title: Text(
+            "Confirmation",
+            style: TextStyle(color: Colors.brown[700]),
           ),
-        ],
-      ),
-    );
+          content: Text("Are you sure want to delete ${product.name}?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text("No", style: TextStyle(color: Colors.brown[700])),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text("Yes", style: TextStyle(color: Colors.brown[700])),
+            ),
+          ],
+        ),
+      );
 
     if (confirm == true) {
       try {

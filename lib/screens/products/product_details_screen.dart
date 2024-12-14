@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '/screens/products/edit_product_screen.dart';
+import '/services/api_service.dart';
+import '/screens/products/widgets/product_card.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -23,6 +25,37 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool isInWishlist = false;
+  List<Product> similarProducts = [];
+  bool isLoading = true;
+  final ApiService apiService = ApiService(baseUrl: "http://localhost:8000");
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSimilarProducts();
+  }
+
+  Future<void> _loadSimilarProducts() async {
+    try {
+      final products = await apiService.fetchProducts(
+        kategori: widget.product.kategori,
+      );
+      
+      final filteredProducts = products
+          .where((p) => p.id != widget.product.id)
+          .toList()
+        ..shuffle();
+      
+      setState(() {
+        similarProducts = filteredProducts.take(5).toList();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   String formatPrice(int price) {
     final formatter = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
@@ -57,17 +90,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
 
     if (result == true && mounted) {
-      // Panggil callback
       if (widget.onEdit != null) {
         widget.onEdit!();
       }
-
-      // Tampilkan pesan sukses
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Product updated successfully")),
       );
-
-      // Kembali ke layar sebelumnya
       Navigator.pop(context, true);
     }
   }
@@ -78,13 +106,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       appBar: AppBar(
         title: Text(widget.product.name),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-       
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar Produk
             AspectRatio(
               aspectRatio: 1,
               child: CachedNetworkImage(
@@ -97,7 +123,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
             
-            // Informasi Produk
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -147,9 +172,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   const SizedBox(height: 24),
                   
-                  // Bagian Review
                   const Text(
-                    'Ulasan',
+                    'Review',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -181,6 +205,34 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ],
               ),
             ),
+
+            // Similar Products Section
+            if (similarProducts.isNotEmpty) ...[
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Text(
+                  'Similar Products',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 280,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: similarProducts.length,
+                  itemBuilder: (context, index) => ProductCard(
+                    product: similarProducts[index],
+                    isAdmin: widget.isAdmin,
+                    onDelete: () {}, // Empty callback since it's not needed for similar products
+                    onEdit: () {}, // Empty callback since it's not needed for similar products
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -199,60 +251,60 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           child: SizedBox(
             width: double.infinity,
             child: widget.isAdmin 
-            ? ElevatedButton(
-                onPressed: _handleEdit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.brown[700],
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                      size: 20,
+              ? ElevatedButton(
+                  onPressed: _handleEdit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.brown[700],
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    SizedBox(width: 8),
-                    Text(
-                      'Edit Produk',
-                      style: TextStyle(
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.edit,
                         color: Colors.white,
+                        size: 20,
                       ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Edit Product',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : ElevatedButton(
+                  onPressed: toggleWishlist,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isInWishlist ? Colors.grey[300] : Colors.brown[700],
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ],
-                ),
-              )
-            : ElevatedButton(
-                onPressed: toggleWishlist,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isInWishlist ? Colors.grey[300] : Colors.brown[700],
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        isInWishlist ? Icons.favorite : Icons.favorite_outline,
+                        color: isInWishlist ? Colors.red : Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        isInWishlist ? 'Added to Wishlist' : 'Add to Wishlist',
+                        style: TextStyle(
+                          color: isInWishlist ? Colors.black87 : Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      isInWishlist ? Icons.favorite : Icons.favorite_outline,
-                      color: isInWishlist ? Colors.red : Colors.white,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      isInWishlist ? 'Add to Wishlist' : 'Added to Wishlist',
-                      style: TextStyle(
-                        color: isInWishlist ? Colors.black87 : Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
           ),
         ),
       ),

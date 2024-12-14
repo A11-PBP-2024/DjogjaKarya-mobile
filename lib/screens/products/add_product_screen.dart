@@ -84,6 +84,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.brown[700]!),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 onChanged: (value) => setState(() => _name = value),
                 validator: (value) => value?.isEmpty ?? true ? 'Name is required' : null,
@@ -104,6 +110,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.brown[700]!),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                dropdownColor: Colors.white,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
                 ),
                 items: categories.map((String category) {
                   return DropdownMenuItem(
@@ -133,6 +150,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.brown[700]!),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) => setState(() => _harga = int.tryParse(value) ?? 0),
@@ -154,6 +177,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.brown[700]!),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                dropdownColor: Colors.white,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
                 ),
                 items: stores.map((String store) {
                   return DropdownMenuItem(
@@ -183,6 +217,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.brown[700]!),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 onChanged: (value) => setState(() => _image = value),
                 validator: (value) => value?.isEmpty ?? true ? 'Image URL is required' : null,

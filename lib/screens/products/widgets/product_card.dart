@@ -158,8 +158,8 @@ class _ProductCardState extends State<ProductCard> {
                         child: IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(
-                            isInWishlist ? Icons.favorite : Icons.favorite_border,
-                            color: isInWishlist ? Colors.red : Colors.grey,
+                            Icons.favorite, // Always use filled heart
+                            color: isInWishlist ? Colors.red : Colors.grey, // Change color based on wishlist status
                             size: 24,
                           ),
                           onPressed: toggleWishlist,
