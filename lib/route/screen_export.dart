@@ -11,3 +11,8 @@ export '/screens/products/add_product_screen.dart';
 export '/screens/products/category_products_screen.dart';
 export '/screens/products/category_screen.dart';
 export '/screens/products/edit_product_screen.dart';
+
+// untuk MERCHANT
+export '/screens/merchant/store_list.dart';
+export '/screens/merchant/addstore_form.dart';
+export '/screens/merchant/editstore_form.dart';
