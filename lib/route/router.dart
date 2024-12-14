@@ -129,6 +129,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //     builder: (context) => const SetupFaceIdScreen(),
     //   );
    
+    case entryPointRoute:
+      return MaterialPageRoute(builder: (_) => const EntryPoint());
+
+
     case homeScreenRoute:
       return MaterialPageRoute(
         builder: (context) => const HomeScreen(),
@@ -150,6 +154,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case cartScreenRoute:
       return MaterialPageRoute(
         builder: (context) => const StoreEntryPage(),
+    );
+   
+    case discoverScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const CategoriesScreen(),
       );
 
     case entryPointScreenRoute:

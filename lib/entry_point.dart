@@ -14,7 +14,7 @@ class EntryPoint extends StatefulWidget {
 class _EntryPointState extends State<EntryPoint> {
   final List _pages = const [
     HomeScreen(),
-    HomeScreen(),
+    CategoriesScreen(),
     HomeScreen(),
     StoreEntryPage(),
     HomeScreen(),
