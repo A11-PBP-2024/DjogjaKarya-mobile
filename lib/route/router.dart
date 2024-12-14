@@ -141,12 +141,17 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //   return MaterialPageRoute(
     //     builder: (context) => const DiscoverWithImageScreen(),
     //   );
+
     // case subDiscoverScreenRoute:
     //   return MaterialPageRoute(
-    //     builder: (context) => const SubDiscoverScreen(),
+    //     builder: (context) => const CategoriesScreen(),
     //   );
-   
-   
+
+    case cartScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const StoreEntryPage(),
+      );
+
     case entryPointScreenRoute:
       return MaterialPageRoute(
         builder: (context) => const EntryPoint(),

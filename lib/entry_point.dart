@@ -16,7 +16,7 @@ class _EntryPointState extends State<EntryPoint> {
     HomeScreen(),
     HomeScreen(),
     HomeScreen(),
-    HomeScreen(),
+    StoreEntryPage(),
     HomeScreen(),
     //DiscoverScreen(),
     //BookmarkScreen(),
@@ -127,7 +127,7 @@ class _EntryPointState extends State<EntryPoint> {
               icon: svgIcon("assets/icons/Category.svg"),
               activeIcon:
                   svgIcon("assets/icons/Category.svg", color: primaryColor),
-              label: "Discover",
+              label: "Products",
             ),
             BottomNavigationBarItem(
               icon: svgIcon("assets/icons/Bookmark.svg"),
@@ -136,9 +136,9 @@ class _EntryPointState extends State<EntryPoint> {
               label: "Bookmark",
             ),
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Bag.svg"),
-              activeIcon: svgIcon("assets/icons/Bag.svg", color: primaryColor),
-              label: "Cart",
+              icon: svgIcon("assets/icons/Location.svg"),
+              activeIcon: svgIcon("assets/icons/Location.svg", color: primaryColor),
+              label: "Merchant",
             ),
             BottomNavigationBarItem(
               icon: svgIcon("assets/icons/Profile.svg"),
