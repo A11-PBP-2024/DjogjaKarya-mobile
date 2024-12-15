@@ -42,11 +42,9 @@ class _StoreEntryFormPageState extends State<StoreEntryFormPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Add Store',
-            style: TextStyle(color: Colors.white),
-          ),
+        title: const Text(
+          'Add Store',
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.brown[700],
       ),

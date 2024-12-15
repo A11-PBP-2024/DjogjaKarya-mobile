@@ -1,7 +1,7 @@
-// store_card.dart
 import 'package:flutter/material.dart';
 import 'package:shop/constants.dart';
 import '/models/store_entry.dart';
+import '/screens/merchant/store_products.dart';
 import '/screens/merchant/editstore_form.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -11,12 +11,57 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class StoreCard extends StatelessWidget {
   final StoreEntry store;
   final VoidCallback onDeleteSuccess;
+  final bool isAdmin;
 
   const StoreCard({
     Key? key,
     required this.store,
     required this.onDeleteSuccess,
+    required this.isAdmin,
   }) : super(key: key);
+
+  Widget _buildAdminControls(BuildContext context) {
+    if (!isAdmin) return const SizedBox.shrink();
+
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditStoreFormPage(store: store),
+                ),
+              ).then((_) => onDeleteSuccess());
+            },
+            icon: const Icon(Icons.edit),
+            label: const Text('Edit'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.orange,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              _showDeleteConfirmation(context);
+            },
+            icon: const Icon(Icons.delete),
+            label: const Text('Delete'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.red,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   void _showDetailDialog(BuildContext context) {
     final PageController pageController = PageController();
@@ -39,7 +84,6 @@ class StoreCard extends StatelessWidget {
         expand: false,
         builder: (context, scrollController) => Column(
           children: [
-            // Header with title and close button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
@@ -66,7 +110,6 @@ class StoreCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Store Image
                     SizedBox(
                       height: 200,
                       child: Stack(
@@ -104,7 +147,6 @@ class StoreCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Store Details
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -134,7 +176,6 @@ class StoreCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          // Days, Hours, Phone
                           Column(
                             children: [
                               Row(
@@ -174,7 +215,31 @@ class StoreCard extends StatelessWidget {
                                       store.fields.phone,
                                       style: const TextStyle(
                                         color: Colors.blue,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => StoreProductsPage(store: store, isAdmin: isAdmin),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.shopping_bag, color: primaryColor, size: 20),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'View products in ${store.fields.name}',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
                                         decoration: TextDecoration.underline,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -183,7 +248,6 @@ class StoreCard extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 24),
-                          // Directions Button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -211,45 +275,8 @@ class StoreCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          // Admin buttons
-                          Row(
-                            children: [
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditStoreFormPage(store: store),
-                                      ),
-                                    ).then((_) => onDeleteSuccess());
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                  label: const Text('Edit'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.orange,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _showDeleteConfirmation(context);
-                                  },
-                                  icon: const Icon(Icons.delete),
-                                  label: const Text('Delete'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.red,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          // Admin controls now using the extracted method
+                          _buildAdminControls(context),
                         ],
                       ),
                     ),
@@ -307,7 +334,6 @@ class StoreCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Store Image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
@@ -324,7 +350,6 @@ class StoreCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            // Store Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

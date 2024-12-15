@@ -136,8 +136,8 @@ class _EntryPointState extends State<EntryPoint> {
               label: "Bookmark",
             ),
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Location.svg"),
-              activeIcon: svgIcon("assets/icons/Location.svg", color: primaryColor),
+              icon: svgIcon("assets/icons/Stores.svg"),
+              activeIcon: svgIcon("assets/icons/Stores.svg", color: primaryColor),
               label: "Merchant",
             ),
             BottomNavigationBarItem(
