@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Tambahkan izin untuk akses internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Tambahkan izin untuk debugging jaringan (opsional, hanya untuk debugging) -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:label="djogjakarya"
         android:name="${applicationName}"
