@@ -29,7 +29,7 @@ class _AddArticleFormPageState extends State<AddArticleFormPage> {
 
   Future<void> _addArticle() async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/article/add-article-flutter/'),
+      Uri.parse('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/article/add-article-flutter/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'title': _title,

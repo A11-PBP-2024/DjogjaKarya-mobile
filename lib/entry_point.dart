@@ -5,10 +5,9 @@ import 'package:shop/constants.dart';
 import 'package:shop/route/screen_export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class EntryPoint extends StatefulWidget {
-  const EntryPoint({super.key});
-
+  final int initialIndex;
+  const EntryPoint({Key? key, this.initialIndex = 0}) : super(key: key);
   @override
   State<EntryPoint> createState() => _EntryPointState();
 }
@@ -19,14 +18,15 @@ class _EntryPointState extends State<EntryPoint> {
     CategoriesScreen(),
     HomeScreen(),
     StoreEntryPage(),
-    HomeScreen(),
+    BlogHomePage(),
   ];
-  int _currentIndex = 0;
+  late int _currentIndex;
   String _username = ""; // Variabel untuk menyimpan nama pengguna
 
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex;
     _loadUserName();
   }
 
@@ -34,7 +34,8 @@ class _EntryPointState extends State<EntryPoint> {
   Future<void> _loadUserName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _username = prefs.getString('username') ?? "Guest"; // Default "Guest" jika tidak ditemukan
+      _username = prefs.getString('username') ??
+          "Guest"; // Default "Guest" jika tidak ditemukan
     });
   }
 
@@ -59,8 +60,8 @@ class _EntryPointState extends State<EntryPoint> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16),
           child: GestureDetector(
-            child: Image.network(
-              "https://i.imgur.com/Iu7BTnD.png", // Path logo
+             child: Image.asset(
+              "assets/logo/Logo.png", // Ganti dengan logo lokal
               height: 40,
               fit: BoxFit.contain,
             ),
@@ -90,14 +91,21 @@ class _EntryPointState extends State<EntryPoint> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(width: 8),
-              const CircleAvatar(
-                radius: 16,
-                backgroundImage: NetworkImage(
-                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png", // URL gambar profil pengguna
+              IconButton(
+                onPressed: () {
+                  // Logika logout, misalnya:
+                  // context.read<AuthenticationProvider>().logout();
+                  Navigator.pushReplacementNamed(
+                      context, '/login'); // Sesuaikan rute login
+                },
+                icon: SvgPicture.asset(
+                  "assets/icons/Logout.svg", // Ganti dengan ikon logout jika ada
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                      Theme.of(context).textTheme.bodyLarge!.color!,
+                      BlendMode.srcIn),
                 ),
               ),
-              const SizedBox(width: 16),
             ],
           ),
         ],

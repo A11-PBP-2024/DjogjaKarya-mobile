@@ -17,12 +17,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
   int _harga = 0;
   String? _toko;
   String _image = "";
-  
+
   List<String> categories = [];
   List<String> stores = [];
   bool isLoading = true;
 
-  @override 
+  @override
   void initState() {
     super.initState();
     fetchFormData();
@@ -31,9 +31,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Future<void> fetchFormData() async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get(
-        'http://localhost:8000/product/get-form-data/'
-      );
+      final response =
+          await request.get('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/get-form-data/');
       setState(() {
         categories = List<String>.from(response['categories']);
         stores = List<String>.from(response['stores']);
@@ -47,7 +46,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    
+
     if (isLoading) {
       return Scaffold(
         appBar: AppBar(
@@ -92,7 +91,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   fillColor: Colors.white,
                 ),
                 onChanged: (value) => setState(() => _name = value),
-                validator: (value) => value?.isEmpty ?? true ? 'Name is required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Name is required' : null,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -133,7 +133,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     _kategori = newValue;
                   });
                 },
-                validator: (value) => value == null ? 'Please select a category' : null,
+                validator: (value) =>
+                    value == null ? 'Please select a category' : null,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -158,8 +159,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.number,
-                onChanged: (value) => setState(() => _harga = int.tryParse(value) ?? 0),
-                validator: (value) => value?.isEmpty ?? true ? 'Price is required' : null,
+                onChanged: (value) =>
+                    setState(() => _harga = int.tryParse(value) ?? 0),
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Price is required' : null,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -200,7 +203,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     _toko = newValue;
                   });
                 },
-                validator: (value) => value == null ? 'Please select a store' : null,
+                validator: (value) =>
+                    value == null ? 'Please select a store' : null,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -225,7 +229,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   fillColor: Colors.white,
                 ),
                 onChanged: (value) => setState(() => _image = value),
-                validator: (value) => value?.isEmpty ?? true ? 'Image URL is required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Image URL is required' : null,
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -242,7 +247,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     if (_formKey.currentState!.validate()) {
                       try {
                         final response = await request.post(
-                          "http://localhost:8000/product/add-product-flutter/",
+                          "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/add-product-flutter/",
                           {
                             'name': _name,
                             'kategori': _kategori,
@@ -251,10 +256,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             'image': _image,
                           },
                         );
-                        
+
                         if (response['status'] == 'success' && mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Product added successfully")),
+                            const SnackBar(
+                                content: Text("Product added successfully")),
                           );
                           Navigator.pop(context, true);
                         }

@@ -27,10 +27,9 @@ class _ProductCardState extends State<ProductCard> {
 
   String formatPrice(int price) {
     final formatter = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    return price.toString().replaceAllMapped(
-      formatter, 
-      (Match m) => '${m[1]}.'
-    );
+    return price
+        .toString()
+        .replaceAllMapped(formatter, (Match m) => '${m[1]}.');
   }
 
   bool isLongName(String name) {
@@ -43,10 +42,7 @@ class _ProductCardState extends State<ProductCard> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            isInWishlist 
-              ? 'Added to Wishlist' 
-              : 'Removed from Wishlist'
-          ),
+              isInWishlist ? 'Added to Wishlist' : 'Removed from Wishlist'),
           duration: const Duration(seconds: 1),
         ),
       );
@@ -68,7 +64,7 @@ class _ProductCardState extends State<ProductCard> {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () async {  
+          onTap: () async {
             final shouldRefresh = await Navigator.push<bool>(
               context,
               MaterialPageRoute(
@@ -92,11 +88,13 @@ class _ProductCardState extends State<ProductCard> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12)),
                         border: Border.all(color: Colors.grey.shade200),
                       ),
                       child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12)),
                         child: CachedNetworkImage(
                           imageUrl: widget.product.image,
                           placeholder: (context, url) => const Center(
@@ -133,7 +131,8 @@ class _ProductCardState extends State<ProductCard> {
                                 height: 32,
                                 child: IconButton(
                                   padding: EdgeInsets.zero,
-                                  icon: const Icon(Icons.edit, size: 16, color: Colors.orange),
+                                  icon: const Icon(Icons.edit,
+                                      size: 16, color: Colors.orange),
                                   onPressed: widget.onEdit,
                                 ),
                               ),
@@ -142,7 +141,8 @@ class _ProductCardState extends State<ProductCard> {
                                 height: 32,
                                 child: IconButton(
                                   padding: EdgeInsets.zero,
-                                  icon: const Icon(Icons.delete, size: 16, color: Colors.red),
+                                  icon: const Icon(Icons.delete,
+                                      size: 16, color: Colors.red),
                                   onPressed: widget.onDelete,
                                 ),
                               ),
@@ -158,7 +158,10 @@ class _ProductCardState extends State<ProductCard> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.favorite, // Always use filled heart
-                            color: isInWishlist ? Colors.red : Colors.grey, // Change color based on wishlist status
+                            color: isInWishlist
+                                ? Colors.red
+                                : Colors
+                                    .grey, // Change color based on wishlist status
                             size: 24,
                           ),
                           onPressed: toggleWishlist,
@@ -174,7 +177,8 @@ class _ProductCardState extends State<ProductCard> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade200),
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+                    borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(12)),
                   ),
                   child: isLongName(widget.product.name)
                       ? Column(
@@ -208,7 +212,8 @@ class _ProductCardState extends State<ProductCard> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.brown[100],
                                 borderRadius: BorderRadius.circular(12),
@@ -251,7 +256,8 @@ class _ProductCardState extends State<ProductCard> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.brown[100],
                                 borderRadius: BorderRadius.circular(12),

@@ -5,7 +5,7 @@ import '/models/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   final Product product;
-  
+
   const EditProductScreen({super.key, required this.product});
 
   @override
@@ -19,7 +19,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   late int _harga;
   late String? _toko;
   late String _image;
-  
+
   List<String> categories = [];
   List<String> stores = [];
   bool isLoading = true;
@@ -38,9 +38,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   Future<void> fetchFormData() async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get(
-        'http://localhost:8000/product/get-form-data/'
-      );
+      final response =
+          await request.get('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/get-form-data/');
       setState(() {
         categories = List<String>.from(response['categories']);
         stores = List<String>.from(response['stores']);
@@ -100,7 +99,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   fillColor: Colors.white,
                 ),
                 onChanged: (value) => setState(() => _name = value),
-                validator: (value) => value?.isEmpty ?? true ? 'Name is required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Name is required' : null,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -141,7 +141,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     _kategori = newValue;
                   });
                 },
-                validator: (value) => value == null ? 'Please select a category' : null,
+                validator: (value) =>
+                    value == null ? 'Please select a category' : null,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -167,8 +168,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.number,
-                onChanged: (value) => setState(() => _harga = int.tryParse(value) ?? 0),
-                validator: (value) => value?.isEmpty ?? true ? 'Price is required' : null,
+                onChanged: (value) =>
+                    setState(() => _harga = int.tryParse(value) ?? 0),
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Price is required' : null,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -209,7 +212,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     _toko = newValue;
                   });
                 },
-                validator: (value) => value == null ? 'Please select a store' : null,
+                validator: (value) =>
+                    value == null ? 'Please select a store' : null,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -235,7 +239,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   fillColor: Colors.white,
                 ),
                 onChanged: (value) => setState(() => _image = value),
-                validator: (value) => value?.isEmpty ?? true ? 'Image URL is required' : null,
+                validator: (value) =>
+                    value?.isEmpty ?? true ? 'Image URL is required' : null,
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -252,7 +257,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     if (_formKey.currentState!.validate()) {
                       try {
                         final response = await request.post(
-                          "http://localhost:8000/product/edit-product-flutter/${widget.product.id}/",
+                          "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/edit-product-flutter/${widget.product.id}/",
                           {
                             'name': _name,
                             'kategori': _kategori,
@@ -264,7 +269,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
                         if (response['status'] == 'success' && mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Product updated successfully")),
+                            const SnackBar(
+                                content: Text("Product updated successfully")),
                           );
                           Navigator.pop(context, true);
                         }

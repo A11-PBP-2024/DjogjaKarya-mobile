@@ -36,9 +36,9 @@ class OnbordingContent extends StatelessWidget {
         if (!isTextOnTop) const Spacer(),
         if (!isTextOnTop)
           const OnbordTitleDescription(
-            title: "Find the item you’ve \nbeen looking for",
+            title: "Discover Local Creations from Yogyakarta",
             description:
-                "Here you’ll see rich varieties of goods, carefully classified for seamless browsing experience.",
+                "Explore the uniqueness of authentic art and handmade crafts from Yogyakarta, rich in culture and tradition.",
           ),
 
         const Spacer(),

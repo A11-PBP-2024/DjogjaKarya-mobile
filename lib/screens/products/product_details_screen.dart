@@ -23,7 +23,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool isInWishlist = false;
   List<Product> similarProducts = [];
   bool isLoading = true;
-  final ApiService apiService = ApiService(baseUrl: "http://localhost:8000");
+  final ApiService apiService = ApiService(baseUrl: "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id");
 
   @override
   void initState() {
@@ -37,10 +37,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         kategori: widget.product.kategori,
       );
 
-      final filteredProducts = products
-          .where((p) => p.id != widget.product.id)
-          .toList()
-        ..shuffle();
+      final filteredProducts =
+          products.where((p) => p.id != widget.product.id).toList()..shuffle();
 
       setState(() {
         similarProducts = filteredProducts.take(5).toList();
@@ -56,9 +54,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String formatPrice(int price) {
     final formatter = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
     return price.toString().replaceAllMapped(
-      formatter,
-      (Match m) => '${m[1]}.',
-    );
+          formatter,
+          (Match m) => '${m[1]}.',
+        );
   }
 
   void toggleWishlist() {
@@ -161,7 +159,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           MaterialPageRoute(
                             builder: (context) => ReviewListPage(
                               productId: widget.product.id,
-                              productName: widget.product.name, 
+                              productName: widget.product.name,
                             ),
                           ),
                         );
@@ -218,57 +216,57 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: !widget.isAdmin ? Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: toggleWishlist,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isInWishlist ? Colors.grey[300] : Colors.brown[700],
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    isInWishlist
-                        ? Icons.favorite
-                        : Icons.favorite_outline,
-                    color: isInWishlist ? Colors.red : Colors.white,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    isInWishlist
-                        ? 'Added to Wishlist'
-                        : 'Add to Wishlist',
-                    style: TextStyle(
-                      color: isInWishlist
-                          ? Colors.black87
-                          : Colors.white,
-                    ),
+      bottomNavigationBar: !widget.isAdmin
+          ? Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
                   ),
                 ],
               ),
-            ),
-          ),
-        ),
-      ) : null,
+              child: SafeArea(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: toggleWishlist,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          isInWishlist ? Colors.grey[300] : Colors.brown[700],
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isInWishlist
+                              ? Icons.favorite
+                              : Icons.favorite_outline,
+                          color: isInWishlist ? Colors.red : Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          isInWishlist
+                              ? 'Added to Wishlist'
+                              : 'Add to Wishlist',
+                          style: TextStyle(
+                            color: isInWishlist ? Colors.black87 : Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : null,
     );
   }
 }

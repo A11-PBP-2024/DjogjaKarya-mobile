@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import '/models/product.dart';
@@ -29,7 +28,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   String? selectedAlphabetSort;
   String? selectedPriceSort;
   TextEditingController searchController = TextEditingController();
-  final ApiService apiService = ApiService(baseUrl: "http://localhost:8000");
+  final ApiService apiService = ApiService(baseUrl: "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id");
 
   final List<String> alphabetSortOptions = ['A-Z', 'Z-A'];
   final List<String> priceSortOptions = ['Lowest Price', 'Highest Price'];
@@ -48,7 +47,8 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
 
   Future<void> _fetchProducts() async {
     try {
-      final fetchedProducts = await apiService.fetchProducts(kategori: widget.categoryName);
+      final fetchedProducts =
+          await apiService.fetchProducts(kategori: widget.categoryName);
       setState(() {
         products = fetchedProducts;
         filteredProducts = fetchedProducts;
@@ -92,15 +92,17 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     List<Product> result = List.from(products);
 
     if (searchController.text.isNotEmpty) {
-      result = result.where((product) => 
-        product.name.toLowerCase().contains(searchController.text.toLowerCase())
-      ).toList();
+      result = result
+          .where((product) => product.name
+              .toLowerCase()
+              .contains(searchController.text.toLowerCase()))
+          .toList();
     }
 
     setState(() {
       filteredProducts = result;
     });
-    
+
     if (selectedAlphabetSort != null || selectedPriceSort != null) {
       _applySorting();
     }
@@ -128,12 +130,12 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             onChanged: (_) => _applyFilters(),
           ),
           const SizedBox(height: 16),
-          
           Row(
             children: [
               Expanded(
@@ -152,9 +154,9 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                       child: Text('None'),
                     ),
                     ...alphabetSortOptions.map((option) => DropdownMenuItem(
-                      value: option,
-                      child: Text(option),
-                    )),
+                          value: option,
+                          child: Text(option),
+                        )),
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -182,9 +184,9 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                       child: Text('None'),
                     ),
                     ...priceSortOptions.map((option) => DropdownMenuItem(
-                      value: option,
-                      child: Text(option),
-                    )),
+                          value: option,
+                          child: Text(option),
+                        )),
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -197,9 +199,8 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
               ),
             ],
           ),
-          
-          if (searchController.text.isNotEmpty || 
-              selectedAlphabetSort != null || 
+          if (searchController.text.isNotEmpty ||
+              selectedAlphabetSort != null ||
               selectedPriceSort != null)
             Padding(
               padding: const EdgeInsets.only(top: 16),
@@ -219,45 +220,46 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
 
   Future<void> _onDeleteProduct(Product product) async {
     final request = context.read<CookieRequest>();
-    
+
     final confirm = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          title: Text(
-            "Confirmation",
-            style: TextStyle(color: Colors.brown[700]),
-          ),
-          content: Text("Are you sure want to delete ${product.name}?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text("No", style: TextStyle(color: Colors.brown[700])),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text("Yes", style: TextStyle(color: Colors.brown[700])),
-            ),
-          ],
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-      );
+        title: Text(
+          "Confirmation",
+          style: TextStyle(color: Colors.brown[700]),
+        ),
+        content: Text("Are you sure want to delete ${product.name}?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("No", style: TextStyle(color: Colors.brown[700])),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text("Yes", style: TextStyle(color: Colors.brown[700])),
+          ),
+        ],
+      ),
+    );
 
     if (confirm == true) {
       try {
         final response = await request.post(
-          "http://localhost:8000/product/delete-product-flutter/${product.id}/",
-          {},  // empty body karena delete
+          "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/delete-product-flutter/${product.id}/",
+          {}, // empty body karena delete
         );
-        
-        if (response['message'] != null) {  // atau sesuaikan dengan response dari Django
+
+        if (response['message'] != null) {
+          // atau sesuaikan dengan response dari Django
           setState(() {
             products.remove(product);
             _applyFilters();
           });
-          
+
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Product deleted successfully")),
@@ -272,7 +274,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
         }
       }
     }
-}
+  }
 
   Future<void> _onEditProduct(Product product) async {
     final result = await Navigator.push(
@@ -346,7 +348,8 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                 : GridView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: filteredProducts.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
