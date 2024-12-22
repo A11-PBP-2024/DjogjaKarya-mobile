@@ -1,6 +1,9 @@
 // lib/widgets/product_card.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/services/wishlist_service.dart';
 import '/models/product.dart';
 import '/screens/products/product_details_screen.dart';
 
@@ -11,46 +14,94 @@ class ProductCard extends StatefulWidget {
   final VoidCallback onEdit;
 
   const ProductCard({
-    super.key,
+    Key? key,
     required this.product,
     required this.isAdmin,
     required this.onDelete,
     required this.onEdit,
-  });
+  }) : super(key: key);
 
   @override
   _ProductCardState createState() => _ProductCardState();
 }
 
 class _ProductCardState extends State<ProductCard> {
+  late WishlistService wishlistService;
+
   bool isInWishlist = false; // Status wishlist
 
   String formatPrice(int price) {
     final formatter = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    return price.toString().replaceAllMapped(
-      formatter, 
-      (Match m) => '${m[1]}.'
-    );
+    return price
+        .toString()
+        .replaceAllMapped(formatter, (Match m) => '${m[1]}.');
   }
 
   bool isLongName(String name) {
     return name.length > 20 || name.contains('\n');
   }
 
-  void toggleWishlist() {
-    setState(() {
-      isInWishlist = !isInWishlist;
+  Future<void> _checkWishlistStatus() async {
+    try {
+      final wishlistItems = await wishlistService.fetchWishlist();
+      setState(() {
+        isInWishlist =
+            wishlistItems.any((wl) => wl.product == widget.product.id);
+      });
+    } catch (e) {
+      // Handle error if needed
+    }
+  }
+
+  void toggleWishlist() async {
+    try {
+      if (!isInWishlist) {
+        //klo isInWishlist == false = belum ada di wishlist brrti ditambahin
+        final success = await wishlistService.addToWishlist(widget.product.id);
+        if (!success) throw Exception('Failed to add to wishlist');
+        setState(() {
+          isInWishlist = true;
+        });
+      } else {
+        //klo isInWishlist == true = sudah ada di wishlist brrti dihapus
+        final success =
+            await wishlistService.removeFromWishlist(widget.product.id);
+        if (!success) throw Exception('Failed to remove from wishlist');
+        setState(() {
+          isInWishlist = false;
+        });
+      }
+    } catch (e) {
+      // Kembalikan status jika gagal
+      // setState(() {
+      //   isInWishlist = !isInWishlist; // Rollback if the operation fails
+      // });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            isInWishlist 
-              ? 'Added to Wishlist' 
-              : 'Removed from Wishlist'
-          ),
-          duration: const Duration(seconds: 1),
-        ),
+        SnackBar(content: Text('Failed to update wishlist')),
       );
-    });
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:
+            Text(isInWishlist ? 'Added to Wishlist' : 'Removed from Wishlist'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    final sessionId = request.cookies['sessionid'];
+    final csrfToken = request.cookies['csrftoken'];
+    wishlistService = WishlistService(
+        baseUrl: "http://10.0.2.2:8000",
+        token: csrfToken!.value,
+        sessionid: sessionId!.value);
+    _checkWishlistStatus();
+
+    super.initState();
   }
 
   @override
@@ -68,7 +119,7 @@ class _ProductCardState extends State<ProductCard> {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () async {  
+          onTap: () async {
             final shouldRefresh = await Navigator.push<bool>(
               context,
               MaterialPageRoute(
@@ -82,6 +133,10 @@ class _ProductCardState extends State<ProductCard> {
 
             if (shouldRefresh == true) {
               widget.onEdit();
+            }else{
+              setState(() {
+                _checkWishlistStatus();
+              });
             }
           },
           child: Column(
@@ -93,11 +148,13 @@ class _ProductCardState extends State<ProductCard> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12)),
                         border: Border.all(color: Colors.grey.shade200),
                       ),
                       child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12)),
                         child: CachedNetworkImage(
                           imageUrl: widget.product.image,
                           placeholder: (context, url) => const Center(
@@ -134,7 +191,8 @@ class _ProductCardState extends State<ProductCard> {
                                 height: 32,
                                 child: IconButton(
                                   padding: EdgeInsets.zero,
-                                  icon: const Icon(Icons.edit, size: 16, color: Colors.orange),
+                                  icon: const Icon(Icons.edit,
+                                      size: 16, color: Colors.orange),
                                   onPressed: widget.onEdit,
                                 ),
                               ),
@@ -143,7 +201,8 @@ class _ProductCardState extends State<ProductCard> {
                                 height: 32,
                                 child: IconButton(
                                   padding: EdgeInsets.zero,
-                                  icon: const Icon(Icons.delete, size: 16, color: Colors.red),
+                                  icon: const Icon(Icons.delete,
+                                      size: 16, color: Colors.red),
                                   onPressed: widget.onDelete,
                                 ),
                               ),
@@ -159,7 +218,10 @@ class _ProductCardState extends State<ProductCard> {
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.favorite, // Always use filled heart
-                            color: isInWishlist ? Colors.red : Colors.grey, // Change color based on wishlist status
+                            color: isInWishlist
+                                ? Colors.red
+                                : Colors
+                                    .grey, // Change color based on wishlist status
                             size: 24,
                           ),
                           onPressed: toggleWishlist,
@@ -175,7 +237,8 @@ class _ProductCardState extends State<ProductCard> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade200),
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+                    borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(12)),
                   ),
                   child: isLongName(widget.product.name)
                       ? Column(
@@ -209,7 +272,8 @@ class _ProductCardState extends State<ProductCard> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.brown[100],
                                 borderRadius: BorderRadius.circular(12),
@@ -252,7 +316,8 @@ class _ProductCardState extends State<ProductCard> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.brown[100],
                                 borderRadius: BorderRadius.circular(12),
