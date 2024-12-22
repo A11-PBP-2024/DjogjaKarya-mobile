@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:shop/constants.dart';
+
 import '/screens/merchant/store_list.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -46,7 +48,7 @@ class _StoreEntryFormPageState extends State<StoreEntryFormPage> {
           'Add Store',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.brown[700],
+        backgroundColor: primaryColor,
       ),
       body: Form(
         key: _formKey,
