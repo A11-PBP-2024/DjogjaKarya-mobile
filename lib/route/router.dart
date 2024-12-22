@@ -171,6 +171,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         builder: (context) => const BlogHomePage(),
       );
 
+    case wishlist:
+      return MaterialPageRoute(
+        builder: (context) => const EntryPoint(),
+      );
+
     // case currentPasswordScreenRoute:
     //   return MaterialPageRoute(
     //     builder: (context) => const CurrentPasswordScreen(),

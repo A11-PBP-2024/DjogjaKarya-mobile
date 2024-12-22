@@ -112,6 +112,7 @@ class _StoreEntryPageState extends State<StoreEntryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Stores',
           style: TextStyle(
