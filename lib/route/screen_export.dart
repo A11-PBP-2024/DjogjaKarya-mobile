@@ -12,6 +12,12 @@ export '/screens/products/category_products_screen.dart';
 export '/screens/products/category_screen.dart';
 export '/screens/products/edit_product_screen.dart';
 
+//untuk ARTICLE
+export '/screens/article/add_article.dart';
+export '/screens/article/article_detail.dart';
+export '/screens/article/edit_article.dart';
+export '/screens/article/homepage_article.dart';
+
 // untuk MERCHANT
 export '/screens/merchant/store_list.dart';
 export '/screens/merchant/addstore_form.dart';
