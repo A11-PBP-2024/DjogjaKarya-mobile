@@ -70,3 +70,4 @@ const String articleDetailRoute = '/article-detail';
 const String editArticleRoute = '/edit-article';
 const String homepageArticleRoute = '/homepage-article';
 const String ArticleScreenRoute = '/article-screen';
+const String wishlist = "wishlist";

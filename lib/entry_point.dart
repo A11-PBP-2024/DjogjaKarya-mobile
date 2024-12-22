@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/route/screen_export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:shop/wishlist/wishlist_screen.dart';
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -17,9 +17,16 @@ class _EntryPointState extends State<EntryPoint> {
   final List _pages = const [
     HomeScreen(),
     CategoriesScreen(),
+    WishlistScreen(),
+    HomeScreen(),
     HomeScreen(),
     StoreEntryPage(),
-    HomeScreen(),
+    BlogHomePage(),
+    //DiscoverScreen(),
+    //BookmarkScreen(),
+    // EmptyCartScreen(), // if Cart is empty
+    //CartScreen(),
+    //ProfileScreen(),
   ];
   int _currentIndex = 0;
   String _username = ""; // Variabel untuk menyimpan nama pengguna
@@ -134,32 +141,35 @@ class _EntryPointState extends State<EntryPoint> {
           // selectedLabelStyle: TextStyle(color: primaryColor),
           selectedFontSize: 12,
           selectedItemColor: primaryColor,
-          unselectedItemColor: Colors.grey,
+          unselectedItemColor: Colors.transparent,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home, color: primaryColor),
-              label: "Home",
+              icon: svgIcon("assets/icons/Shop.svg"),
+              activeIcon: svgIcon("assets/icons/Shop.svg", color: primaryColor),
+              label: "Shop",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.category_outlined),
-              activeIcon: Icon(Icons.category, color: primaryColor),
+              icon: svgIcon("assets/icons/Category.svg"),
+              activeIcon:
+                  svgIcon("assets/icons/Category.svg", color: primaryColor),
               label: "Products",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.bookmark_outline),
-              activeIcon: Icon(Icons.bookmark, color: primaryColor),
-              label: "Wishlist",
+              icon: svgIcon("assets/icons/Bookmark.svg"),
+              activeIcon:
+                  svgIcon("assets/icons/Bookmark.svg", color: primaryColor),
+              label: "Bookmark",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.storefront_outlined),
-              activeIcon: Icon(Icons.storefront, color: primaryColor),
-              label: "Merchant",
+              icon: svgIcon("assets/icons/Bag.svg"),
+              activeIcon: svgIcon("assets/icons/Bag.svg", color: primaryColor),
+              label: "Cart",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.article_outlined),
-              activeIcon: Icon(Icons.article, color: primaryColor),
-              label: "Articles",
+              icon: svgIcon("assets/icons/Profile.svg"),
+              activeIcon:
+                  svgIcon("assets/icons/Profile.svg", color: primaryColor),
+              label: "Profile",
             ),
           ],
         ),
