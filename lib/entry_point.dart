@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/route/screen_export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/wishlist/wishlist_screen.dart';
 
 class EntryPoint extends StatefulWidget {
@@ -19,6 +20,8 @@ class _EntryPointState extends State<EntryPoint> {
     WishlistScreen(),
     HomeScreen(),
     HomeScreen(),
+    StoreEntryPage(),
+    BlogHomePage(),
     //DiscoverScreen(),
     //BookmarkScreen(),
     // EmptyCartScreen(), // if Cart is empty
@@ -26,6 +29,21 @@ class _EntryPointState extends State<EntryPoint> {
     //ProfileScreen(),
   ];
   int _currentIndex = 0;
+  String _username = ""; // Variabel untuk menyimpan nama pengguna
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  // Fungsi untuk memuat nama pengguna dari SharedPreferences
+  Future<void> _loadUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _username = prefs.getString('username') ?? "Guest"; // Default "Guest" jika tidak ditemukan
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,48 +61,54 @@ class _EntryPointState extends State<EntryPoint> {
 
     return Scaffold(
       appBar: AppBar(
-        // pinned: true,
-        // floating: true,
-        // snap: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        leading: const SizedBox(),
-        leadingWidth: 0,
-        centerTitle: false,
-        title: SvgPicture.asset(
-          "assets/logo/Shoplon.svg",
-          colorFilter: ColorFilter.mode(
-              Theme.of(context).iconTheme.color!, BlendMode.srcIn),
-          height: 20,
-          width: 100,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, searchScreenRoute);
-            },
-            icon: SvgPicture.asset(
-              "assets/icons/Search.svg",
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                  Theme.of(context).textTheme.bodyLarge!.color!,
-                  BlendMode.srcIn),
+        backgroundColor: const Color(0xFFE38E27), // Warna oranye
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: GestureDetector(
+            child: Image.network(
+              "https://i.imgur.com/Iu7BTnD.png", // Path logo
+              height: 40,
+              fit: BoxFit.contain,
             ),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, notificationsScreenRoute);
-            },
-            icon: SvgPicture.asset(
-              "assets/icons/Notification.svg",
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                  Theme.of(context).textTheme.bodyLarge!.color!,
-                  BlendMode.srcIn),
+        ),
+        title: Row(
+          children: [
+            const SizedBox(width: 5), // Jarak kecil antara logo dan tulisan
+            Text(
+              "DjogjaKarya",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
+          ],
+        ),
+        actions: [
+          Row(
+            children: [
+              Text(
+                "Hello, $_username 👋🏻", // Ganti dengan nama pengguna dinamis
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 8),
+              const CircleAvatar(
+                radius: 16,
+                backgroundImage: NetworkImage(
+                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png", // URL gambar profil pengguna
+                ),
+              ),
+              const SizedBox(width: 16),
+            ],
           ),
         ],
       ),
-      // body: _pages[_currentIndex],
       body: PageTransitionSwitcher(
         duration: defaultDuration,
         transitionBuilder: (child, animation, secondAnimation) {
