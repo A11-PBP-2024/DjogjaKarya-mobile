@@ -180,7 +180,7 @@ class StoreCard extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.calendar_today, color: primaryColor, size: 20),
+                                  Icon(Icons.calendar_today, color: primaryMaterialColor[600], size: 20),
                                   const SizedBox(width: 8),
                                   Text(
                                     store.fields.opening_days,
@@ -191,7 +191,7 @@ class StoreCard extends StatelessWidget {
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  const Icon(Icons.access_time, color: primaryColor, size: 20),
+                                  Icon(Icons.access_time, color: primaryMaterialColor[600], size: 20),
                                   const SizedBox(width: 8),
                                   Text(
                                     store.fields.opening_hours,
@@ -209,7 +209,7 @@ class StoreCard extends StatelessWidget {
                                 },
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.phone, color: primaryColor, size: 20),
+                                    Icon(Icons.phone, color: primaryMaterialColor[600], size: 20),
                                     const SizedBox(width: 8),
                                     Text(
                                       store.fields.phone,
@@ -232,7 +232,7 @@ class StoreCard extends StatelessWidget {
                                 },
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.shopping_bag, color: primaryColor, size: 20),
+                                    Icon(Icons.shopping_bag, color: primaryMaterialColor[600], size: 20),
                                     const SizedBox(width: 8),
                                     Text(
                                       'View products in ${store.fields.name}',
@@ -375,14 +375,14 @@ class StoreCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 16, color: primaryColor),
+                      Icon(Icons.calendar_today, size: 16, color: primaryMaterialColor[600]),
                       const SizedBox(width: 4),
                       Text(
                         store.fields.opening_days,
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                       const SizedBox(width: 16),
-                      const Icon(Icons.access_time, size: 16, color: primaryColor),
+                      Icon(Icons.access_time, size: 16, color: primaryMaterialColor[600]),
                       const SizedBox(width: 4),
                       Text(
                         store.fields.opening_hours,
