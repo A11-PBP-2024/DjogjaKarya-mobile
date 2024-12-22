@@ -1,4 +1,4 @@
-[![Build status](https://build.appcenter.ms/v0.1/apps/bd7e3991-9682-43d2-95e5-5e8a978c67ab/branches/main/badge)](https://appcenter.ms)
+[![Build status](https://build.appcenter.ms/v0.1/apps/374f4913-8c68-41d9-925e-7df0fd6c672c/branches/main/badge)](https://appcenter.ms)
 
 # DjogjaKarya
 <img width="1710" alt="image" src="https://github.com/user-attachments/assets/61527e84-3cd4-46f7-8bed-e59ddaf265fb">
