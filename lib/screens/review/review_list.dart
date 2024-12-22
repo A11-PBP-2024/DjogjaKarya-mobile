@@ -7,11 +7,13 @@ import 'package:intl/intl.dart';
 class ReviewListPage extends StatefulWidget {
   final int productId;
   final String productName;
-  
+  final bool isAdmin;
+
   const ReviewListPage({
-    Key? key, 
+    Key? key,
     required this.productId,
     required this.productName,
+    this.isAdmin = false,
   }) : super(key: key);
 
   @override
@@ -20,41 +22,63 @@ class ReviewListPage extends StatefulWidget {
 
 class _ReviewListPageState extends State<ReviewListPage> {
   late Future<List<Review>> futureReviews;
-  final ReviewService reviewService = ReviewService();
-  double averageRating = 0.0;
-  int totalReviews = 0;
-  Map<int, int> starSummary = {};
+  final ReviewService _reviewService = ReviewService();
+  double _averageRating = 0.0;
+  int _totalReviews = 0;
+  Map<int, int> _starSummary = {};
 
   @override
   void initState() {
     super.initState();
-    futureReviews = fetchReviewsAndSummary();
+    futureReviews = _fetchReviewsAndSummary();
   }
 
-  Future<List<Review>> fetchReviewsAndSummary() async {
-    final reviews = await reviewService.fetchReviews(productId: widget.productId);
-    calculateSummary(reviews);
+  Future<List<Review>> _fetchReviewsAndSummary() async {
+    final reviews = await _reviewService.fetchReviews(productId: widget.productId);
+    _calculateSummary(reviews);
     return reviews;
   }
 
-  void calculateSummary(List<Review> reviews) {
-    totalReviews = reviews.length;
-    if (totalReviews > 0) {
+  Future<void> _deleteReview(int reviewId) async {
+    try {
+      final success = await _reviewService.deleteReview(reviewId);
+      if (success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ulasan berhasil dihapus')),
+          );
+          setState(() {
+            futureReviews = _fetchReviewsAndSummary();
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal menghapus ulasan: $e')),
+        );
+      }
+    }
+  }
+
+  void _calculateSummary(List<Review> reviews) {
+    _totalReviews = reviews.length;
+    if (_totalReviews > 0) {
       double totalRating = 0;
-      starSummary = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
-      
+      _starSummary = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
+
       for (var review in reviews) {
         totalRating += review.rating;
-        starSummary[review.rating] = (starSummary[review.rating] ?? 0) + 1;
+        _starSummary[review.rating] = (_starSummary[review.rating] ?? 0) + 1;
       }
-      
+
       setState(() {
-        averageRating = totalRating / totalReviews;
+        _averageRating = totalRating / _totalReviews;
       });
     }
   }
 
-  Widget buildStars(double rating, {double size = 24}) {
+  Widget _buildStars(double rating, {double size = 24}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(5, (index) {
@@ -68,8 +92,8 @@ class _ReviewListPageState extends State<ReviewListPage> {
     );
   }
 
-  Widget buildSummaryBar(int star, int count) {
-    double percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+  Widget _buildSummaryBar(int star, int count) {
+    double percentage = _totalReviews > 0 ? (count / _totalReviews) * 100 : 0;
     return Row(
       children: [
         Text('$star', style: const TextStyle(fontSize: 14)),
@@ -105,7 +129,7 @@ class _ReviewListPageState extends State<ReviewListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customer Reviews & Ratings'),
+        title: const Text('Ulasan Pelanggan & Peringkat'),
       ),
       body: FutureBuilder<List<Review>>(
         future: futureReviews,
@@ -113,7 +137,7 @@ class _ReviewListPageState extends State<ReviewListPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Terjadi kesalahan: ${snapshot.error}'));
           }
 
           final reviews = snapshot.data ?? [];
@@ -123,52 +147,44 @@ class _ReviewListPageState extends State<ReviewListPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Average Rating Section
                 Center(
                   child: Column(
                     children: [
                       Text(
-                        averageRating.toStringAsFixed(1),
+                        _averageRating.toStringAsFixed(1),
                         style: const TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text('$totalReviews Ratings'),
+                      Text('$_totalReviews Ulasan'),
                       const SizedBox(height: 8),
-                      buildStars(averageRating),
+                      _buildStars(_averageRating),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
-                // Summary Section
                 const Text(
-                  'Summary',
+                  'Ringkasan',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                ...starSummary.entries
+                ..._starSummary.entries
                     .toList()
                     .reversed
                     .map((e) => Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: buildSummaryBar(e.key, e.value),
+                          child: _buildSummaryBar(e.key, e.value),
                         )),
-
                 const SizedBox(height: 24),
-
-                // Reviews Section
                 const Text(
-                  'Customer Reviews',
+                  'Ulasan Pelanggan',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-
                 if (reviews.isEmpty)
                   const Center(
-                    child: Text('There are no reviews for this product.'),
+                    child: Text('Tidak ada ulasan untuk produk ini.'),
                   )
                 else
                   ListView.builder(
@@ -185,17 +201,57 @@ class _ReviewListPageState extends State<ReviewListPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  buildStars(review.rating.toDouble(), size: 20),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    DateFormat('MMM d, y')
-                                        .format(review.createdAt),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        _buildStars(review.rating.toDouble(), size: 20),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          DateFormat('MMM d, y').format(review.createdAt),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
+                                  if (widget.isAdmin)
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.grey,
+                                        size: 24,
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text('Hapus Ulasan'),
+                                            content: const Text('Apakah Anda yakin ingin menghapus ulasan ini?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: const Text('Batal'),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  _deleteReview(review.id!);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.red,
+                                                  foregroundColor: Colors.white,
+                                                ),
+                                                child: const Text('Hapus'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -206,8 +262,6 @@ class _ReviewListPageState extends State<ReviewListPage> {
                       );
                     },
                   ),
-
-                // Add Review Button
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24),
@@ -233,16 +287,15 @@ class _ReviewListPageState extends State<ReviewListPage> {
                             ),
                           ),
                         ).then((value) {
-                          // Refresh halaman ketika kembali dari add review
                           if (value == true) {
                             setState(() {
-                              futureReviews = fetchReviewsAndSummary();
+                              futureReviews = _fetchReviewsAndSummary();
                             });
                           }
                         });
                       },
                       child: const Text(
-                        'Add Review',
+                        'Tambah Ulasan',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

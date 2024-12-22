@@ -160,6 +160,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             builder: (context) => ReviewListPage(
                               productId: widget.product.id,
                               productName: widget.product.name,
+                              isAdmin: widget.isAdmin,
                             ),
                           ),
                         );

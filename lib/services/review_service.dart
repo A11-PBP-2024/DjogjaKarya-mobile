@@ -44,4 +44,23 @@ class ReviewService {
      throw Exception("Failed to add review: $e");
    }
  }
+
+ Future<bool> deleteReview(int reviewId) async {
+   try {
+     final response = await http.delete(
+       Uri.parse("$baseUrl/api/reviews/$reviewId/delete/"),
+       headers: {
+         'Content-Type': 'application/json',
+       },
+     );
+
+     if (response.statusCode == 200) {
+       return true;
+     } else {
+       throw Exception("Failed to delete review: ${response.statusCode}");
+     }
+   } catch (e) {
+     throw Exception("Failed to delete review: $e");
+   }
+ }
 }
