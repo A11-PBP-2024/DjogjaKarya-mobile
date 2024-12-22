@@ -108,5 +108,8 @@ http://fauzan-putra31-djogjakarya.pbp.cs.ui.ac.id/
 ## 🔗 Link Dataset
 https://docs.google.com/spreadsheets/d/1TRI-ySJPl8-Z4J7OobiPfDs0FSshw3zxEH8qmNUL3Xw/edit?gid=0#gid=0
 
+## 🔗 Link Berita Acara
+https://docs.google.com/spreadsheets/d/1uPsflapQ_lHt-RqxF7TABtGPlNN3NjwS5dV3Douj-cw/edit?usp=sharing
+
 ## 🔗 Link Youtube Video 
 https://youtu.be/IwMZ6R5Upjc
