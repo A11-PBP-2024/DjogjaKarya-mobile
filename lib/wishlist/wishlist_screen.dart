@@ -30,7 +30,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
     final csrfToken = request.cookies['csrftoken'];
     print("sessionId ${sessionId?.value}");
     wishlistService = WishlistService(
-        baseUrl: "http://localhost:8000",
+        baseUrl: "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id",
         token: csrfToken!.value,
         sessionid: sessionId!.value);
   }

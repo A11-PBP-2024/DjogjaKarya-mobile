@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         final response = await request.login(
-                          "http://localhost:8000/auth/login-view/", // Adjust this URL for your Django backend
+                          "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/auth/login-view/", // Adjust this URL for your Django backend
                           {
                             'username': _usernameController.text,
                             'password': _passwordController.text,

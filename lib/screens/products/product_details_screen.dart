@@ -23,7 +23,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool isInWishlist = false;
   List<Product> similarProducts = [];
   bool isLoading = true;
-  final ApiService apiService = ApiService(baseUrl: "http://localhost:8000");
+  final ApiService apiService = ApiService(baseUrl: "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id");
 
   @override
   void initState() {

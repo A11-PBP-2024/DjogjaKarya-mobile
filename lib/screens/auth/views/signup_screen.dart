@@ -146,7 +146,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate() && _agreeToTerms) {
                         final response = await request.postJson(
-                          "http://localhost:8000/auth/register-view/", // Adjust this URL for your Django backend
+                          "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/auth/register-view/", // Adjust this URL for your Django backend
                           jsonEncode({
                             "username": _usernameController.text,
                             "password1": _passwordController.text,

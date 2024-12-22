@@ -34,7 +34,7 @@ class _BlogHomePageState extends State<BlogHomePage> {
     try {
       // Fetch status admin
       final userResponse =
-          await request.get('http://localhost:8000/article/get-user-status/');
+          await request.get('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/article/get-user-status/');
       setState(() {
         _isAdmin = userResponse['is_admin'] ?? false;
       });
@@ -50,7 +50,7 @@ class _BlogHomePageState extends State<BlogHomePage> {
   Future<void> fetchArticles(CookieRequest request) async {
     try {
       final response =
-          await request.get('http://localhost:8000/article/get-articles/');
+          await request.get('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/article/get-articles/');
       setState(() {
         _allArticles = [];
         for (var d in response) {
