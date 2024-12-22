@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import '/models/product.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '/screens/products/edit_product_screen.dart';
 import '/services/api_service.dart';
 import '/screens/products/widgets/product_card.dart';
-import '/screens/review/review_list.dart'; // Import halaman ReviewListPage
+import '/screens/review/review_list.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
   final bool isAdmin;
-  final Function()? onEdit;
 
   const ProductDetailScreen({
     super.key,
     required this.product,
     this.isAdmin = false,
-    this.onEdit,
   });
 
   @override
@@ -76,25 +73,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       );
     });
-  }
-
-  Future<void> _handleEdit() async {
-    final result = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditProductScreen(product: widget.product),
-      ),
-    );
-
-    if (result == true && mounted) {
-      if (widget.onEdit != null) {
-        widget.onEdit!();
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Product updated successfully")),
-      );
-      Navigator.pop(context, true);
-    }
   }
 
   @override
@@ -240,7 +218,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: !widget.isAdmin ? Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -254,67 +232,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: SafeArea(
           child: SizedBox(
             width: double.infinity,
-            child: widget.isAdmin
-                ? ElevatedButton(
-                    onPressed: _handleEdit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown[700],
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.edit, color: Colors.white, size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          'Edit Product',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : ElevatedButton(
-                    onPressed: toggleWishlist,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          isInWishlist ? Colors.grey[300] : Colors.brown[700],
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          isInWishlist
-                              ? Icons.favorite
-                              : Icons.favorite_outline,
-                          color: isInWishlist ? Colors.red : Colors.white,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          isInWishlist
-                              ? 'Added to Wishlist'
-                              : 'Add to Wishlist',
-                          style: TextStyle(
-                            color: isInWishlist
-                                ? Colors.black87
-                                : Colors.white,
-                          ),
-                        ),
-                      ],
+            child: ElevatedButton(
+              onPressed: toggleWishlist,
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    isInWishlist ? Colors.grey[300] : Colors.brown[700],
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    isInWishlist
+                        ? Icons.favorite
+                        : Icons.favorite_outline,
+                    color: isInWishlist ? Colors.red : Colors.white,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    isInWishlist
+                        ? 'Added to Wishlist'
+                        : 'Add to Wishlist',
+                    style: TextStyle(
+                      color: isInWishlist
+                          ? Colors.black87
+                          : Colors.white,
                     ),
                   ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+      ) : null,
     );
   }
 }
