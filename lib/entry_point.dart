@@ -16,7 +16,7 @@ class _EntryPointState extends State<EntryPoint> {
     HomeScreen(),
     CategoriesScreen(),
     HomeScreen(),
-    HomeScreen(),
+    StoreEntryPage(),
     BlogHomePage(),
     //DiscoverScreen(),
     //BookmarkScreen(),

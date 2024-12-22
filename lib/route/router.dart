@@ -150,7 +150,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //   return MaterialPageRoute(
     //     builder: (context) => const CategoriesScreen(),
     //   );
-   
+
+    case cartScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const StoreEntryPage(),
+    );
    
     case discoverScreenRoute:
       return MaterialPageRoute(
