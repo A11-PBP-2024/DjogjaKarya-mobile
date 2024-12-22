@@ -1,131 +1,216 @@
 import 'package:flutter/material.dart';
 import '/models/article.dart';
-import 'package:shop/screens/article/article_detail.dart';
+import 'widgets/article_card.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/screens/article/add_article.dart';
 
-// Dummy data untuk simulasi artikel
-final List<Article> articles = [
-  Article(
-    id: 1,
-    title: "Exploring the Art of Batik",
-    description: "Batik is a traditional fabric dyeing technique...",
-    content: "Detailed content about Batik...",
-    author: "John Doe",
-    tags: "art, heritage",
-    publicationDate: "2024-12-15",
-    image: "https://example.com/batik.jpg",
-  ),
-  Article(
-    id: 2,
-    title: "Heritage Sites to Visit",
-    description: "Discover the best heritage sites in Indonesia...",
-    content: "Detailed content about heritage sites...",
-    author: "Jane Smith",
-    tags: "travel, heritage",
-    publicationDate: "2024-11-10",
-    image: "https://example.com/heritage.jpg",
-  ),
-];
+class BlogHomePage extends StatefulWidget {
+  final bool isAdmin;
 
-class BlogHomePage extends StatelessWidget {
-  const BlogHomePage({super.key});
+  const BlogHomePage({super.key, this.isAdmin = false});
+
+  @override
+  State<BlogHomePage> createState() => _BlogHomePageState();
+}
+
+class _BlogHomePageState extends State<BlogHomePage> {
+  String _searchQuery = '';
+  List<Article> _allArticles = [];
+  List<Article> _filteredArticles = [];
+  bool _isLoading = true;
+  bool _isAdmin = false;
+  late final CookieRequest request;
+
+  @override
+  void initState() {
+    super.initState();
+    request = context.read<CookieRequest>();
+    _fetchInitialData();
+  }
+
+  /// Fetch Data Artikel dan Status Admin
+  Future<void> _fetchInitialData() async {
+    try {
+      // Fetch status admin
+      final userResponse =
+          await request.get('http://localhost:8000/article/get-user-status/');
+      setState(() {
+        _isAdmin = userResponse['is_admin'] ?? false;
+      });
+
+      // Fetch artikel
+      await fetchArticles(request);
+    } catch (e) {
+      print('Error fetching initial data: $e');
+    }
+  }
+
+  /// Fetch Artikel dari Django
+  Future<void> fetchArticles(CookieRequest request) async {
+    try {
+      final response =
+          await request.get('http://localhost:8000/article/get-articles/');
+      setState(() {
+        _allArticles = [];
+        for (var d in response) {
+          if (d != null) {
+            _allArticles.add(Article.fromJson(d));
+          }
+        }
+        _filteredArticles = List.from(_allArticles);
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching articles: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Filter Artikel Berdasarkan Query
+  void _filterArticles(String query) {
+    setState(() {
+      _searchQuery = query;
+      _filteredArticles = _allArticles
+          .where((article) =>
+              article.title.toLowerCase().contains(query.toLowerCase()) ||
+              article.tags.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  /// Tombol Tambah Artikel
+  Widget _buildAddButton() {
+    if (!_isAdmin) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: ElevatedButton.icon(
+          onPressed: () async {
+            final newArticle = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AddArticleFormPage(),
+              ),
+            );
+
+            if (newArticle != null && newArticle is Article) {
+              setState(() {
+                _allArticles.add(newArticle);
+                _filterArticles(_searchQuery); // Refresh list
+              });
+            }
+          },
+          icon: const Icon(Icons.add),
+          label: const Text('Add New Article'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 12,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Articles',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        elevation: 0,
+      ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            TextField(
+      body: Column(
+        children: [
+          _buildAddButton(),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _buildArticleList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Menampilkan Daftar Artikel
+  Widget _buildArticleList() {
+    if (_allArticles.isEmpty) {
+      return Center(
+        child: Text(
+          'No articles available.',
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.grey[700],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextField(
+              onChanged: _filterArticles,
               decoration: InputDecoration(
-                hintText: "Search for articles",
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
+                hintText: 'Search articles...',
+                prefixIcon: Icon(Icons.search, color: Colors.blue),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Trending Articles",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: ListView.separated(
-                      itemBuilder: (context, index) {
-                        final article = articles[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ArticleDetail(article: article),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 120,
-                                height: 90,
-                                decoration: BoxDecoration(
-                                  color: Colors.deepOrange,
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(
-                                      article.image,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      article.title,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    Text(
-                                      "${article.author}, ${article.publicationDate}",
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) => const Divider(),
-                      itemCount: articles.length,
-                    ),
-                  ),
-                ],
+          ),
+        ),
+        if (_searchQuery.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Found ${_filteredArticles.length} article(s)',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontStyle: FontStyle.italic,
               ),
             ),
-          ],
+          ),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: _filteredArticles.length,
+            itemBuilder: (_, index) => ArticleCard(
+              article: _filteredArticles[index],
+              onDeleteSuccess: _fetchInitialData,
+              isAdmin: _isAdmin,
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
