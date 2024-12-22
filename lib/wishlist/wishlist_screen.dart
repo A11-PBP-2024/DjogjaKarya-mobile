@@ -19,12 +19,9 @@ class WishlistScreen extends StatefulWidget {
 class _WishlistScreenState extends State<WishlistScreen> {
   late WishlistService wishlistService;
   @override
-  void initState()async {
+  void initState() {
     print("WiistScreen");
     super.initState();
-    final prefs = await SharedPreferences.getInstance();
-    var cek =prefs.getString("csrftoken");
-    print("cek username :$cek");
     final request = Provider.of<CookieRequest>(context, listen: false);
     final sessionId = request.cookies['sessionid'];
     final csrfToken = request.cookies['csrftoken'];
