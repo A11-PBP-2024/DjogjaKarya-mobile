@@ -32,7 +32,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     final request = context.read<CookieRequest>();
     try {
       final response =
-          await request.get('http://localhost:8000/product/get-form-data/');
+          await request.get('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/get-form-data/');
       setState(() {
         categories = List<String>.from(response['categories']);
         stores = List<String>.from(response['stores']);
@@ -247,7 +247,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     if (_formKey.currentState!.validate()) {
                       try {
                         final response = await request.post(
-                          "http://localhost:8000/product/add-product-flutter/",
+                          "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/add-product-flutter/",
                           {
                             'name': _name,
                             'kategori': _kategori,

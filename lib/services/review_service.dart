@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '/models/review.dart';
 
 class ReviewService {
- static const String baseUrl = "http://localhost:8000/reviews";
+ static const String baseUrl = "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/reviews";
 
  Future<List<Review>> fetchReviews({required int productId}) async {
    try {

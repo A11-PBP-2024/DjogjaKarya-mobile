@@ -150,7 +150,7 @@ class _EditStoreFormPageState extends State<EditStoreFormPage> {
                     if (_formKey.currentState!.validate()) {
                       // Prepare data to be sent
                       final response = await request.post(
-                        'http://localhost:8000/merchant/edit-flutter/${widget.store.pk}/',
+                        'https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/merchant/edit-flutter/${widget.store.pk}/',
                         jsonEncode({
                           'name': _name,
                           'description': _description,

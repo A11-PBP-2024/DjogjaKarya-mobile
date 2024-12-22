@@ -28,7 +28,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   String? selectedAlphabetSort;
   String? selectedPriceSort;
   TextEditingController searchController = TextEditingController();
-  final ApiService apiService = ApiService(baseUrl: "http://localhost:8000");
+  final ApiService apiService = ApiService(baseUrl: "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id");
 
   final List<String> alphabetSortOptions = ['A-Z', 'Z-A'];
   final List<String> priceSortOptions = ['Lowest Price', 'Highest Price'];
@@ -249,7 +249,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     if (confirm == true) {
       try {
         final response = await request.post(
-          "http://localhost:8000/product/delete-product-flutter/${product.id}/",
+          "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/delete-product-flutter/${product.id}/",
           {}, // empty body karena delete
         );
 
