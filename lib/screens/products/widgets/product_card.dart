@@ -75,7 +75,6 @@ class _ProductCardState extends State<ProductCard> {
                 builder: (context) => ProductDetailScreen(
                   product: widget.product,
                   isAdmin: widget.isAdmin,
-                  onEdit: widget.onEdit,
                 ),
               ),
             );
