@@ -136,7 +136,7 @@ class _StoreEntryFormPageState extends State<StoreEntryFormPage> {
                         if (_formKey.currentState!.validate()) {
                             // Kirim ke Django dan tunggu respons
                             final response = await request.postJson(
-                                "http://localhost:8000/merchant/create-flutter/",
+                                "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/merchant/create-flutter/",
                                 jsonEncode(<String, String>{
                                     'name': _name,
                                     'description': _description,

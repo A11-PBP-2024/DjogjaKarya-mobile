@@ -34,7 +34,7 @@ class _WishlistProductCardState extends State<WishlistProductCard> {
     final sessionId = request.cookies['sessionid'];
     final csrfToken = request.cookies['csrftoken'];
     wishlistService = WishlistService(
-        baseUrl: "http://10.0.2.2:8000",
+        baseUrl: "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id",
         token: csrfToken!.value,
         sessionid: sessionId!.value);
     _checkWishlistStatus();

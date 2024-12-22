@@ -36,7 +36,7 @@ class _StoreProductsPageState extends State<StoreProductsPage> {
   Future<void> fetchProducts() async {
     try {
       final response = await request.get(
-        'http://localhost:8000/merchant/products-flutter/?toko=${Uri.encodeComponent(widget.store.fields.name)}',
+        'https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/merchant/products-flutter/?toko=${Uri.encodeComponent(widget.store.fields.name)}',
       );
 
       if (response is Map<String, dynamic> && response.containsKey('products')) {
@@ -103,7 +103,7 @@ class _StoreProductsPageState extends State<StoreProductsPage> {
 
     try {
       final response = await request.post(
-        'http://localhost:8000/product/delete-product-flutter/${product.id}/',
+        'https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/delete-product-flutter/${product.id}/',
         {},
       );
 
