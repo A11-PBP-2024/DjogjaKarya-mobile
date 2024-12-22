@@ -332,7 +332,7 @@ class StoreCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center, // Mengubah dari start ke center
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -353,6 +353,7 @@ class StoreCard extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center, // Menambahkan ini untuk center vertikal
                 children: [
                   Text(
                     store.fields.name,
@@ -366,27 +367,52 @@ class StoreCard extends StatelessWidget {
                   Text(
                     store.fields.address,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                       color: Colors.grey[600],
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.calendar_today, size: 16, color: primaryMaterialColor[600]),
-                      const SizedBox(width: 4),
-                      Text(
-                        store.fields.opening_days,
-                        style: TextStyle(color: Colors.grey[600]),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_today, 
+                              size: 16, 
+                              color: primaryMaterialColor[600]),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              store.fields.opening_days,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      Icon(Icons.access_time, size: 16, color: primaryMaterialColor[600]),
-                      const SizedBox(width: 4),
-                      Text(
-                        store.fields.opening_hours,
-                        style: TextStyle(color: Colors.grey[600]),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.access_time, 
+                              size: 16, 
+                              color: primaryMaterialColor[600]),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              store.fields.opening_hours,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
