@@ -42,9 +42,7 @@ class WishlistService {
     final response = await http.get(url, headers: {
       'Cookie': 'sessionid=$sessionid',
     });
-
-  // print(response.body);
-
+  print(response.body);
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final wishlistList = List<WishlistItem>.from(
@@ -67,9 +65,7 @@ class WishlistService {
       var result = Product.fromJson(data);
       return result;
     } else {
-
       throw Exception('Failed to load product');
-
     }
   }
 }
