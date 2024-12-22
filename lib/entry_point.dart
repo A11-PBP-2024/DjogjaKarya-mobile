@@ -56,25 +56,16 @@ class _EntryPointState extends State<EntryPoint> {
           height: 20,
           width: 100,
         ),
-        actions: [
+         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, searchScreenRoute);
+              // Logika logout, misalnya:
+              // context.read<AuthenticationProvider>().logout();
+              Navigator.pushReplacementNamed(
+                  context, '/login'); // Sesuaikan rute login
             },
             icon: SvgPicture.asset(
-              "assets/icons/Search.svg",
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                  Theme.of(context).textTheme.bodyLarge!.color!,
-                  BlendMode.srcIn),
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, notificationsScreenRoute);
-            },
-            icon: SvgPicture.asset(
-              "assets/icons/Notification.svg",
+              "assets/icons/Logout.svg", // Ganti dengan ikon logout jika ada
               height: 24,
               colorFilter: ColorFilter.mode(
                   Theme.of(context).textTheme.bodyLarge!.color!,
