@@ -59,8 +59,8 @@ class _EntryPointState extends State<EntryPoint> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16),
           child: GestureDetector(
-            child: Image.network(
-              "https://i.imgur.com/Iu7BTnD.png", // Path logo
+            child: Image.asset(
+              "assets/logo/Logo.png", // Ganti dengan logo lokal
               height: 40,
               fit: BoxFit.contain,
             ),
