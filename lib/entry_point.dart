@@ -4,11 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/route/screen_export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shop/wishlist/wishlist_screen.dart';
 
 class EntryPoint extends StatefulWidget {
-  const EntryPoint({super.key});
-
+  final int initialIndex;
+  const EntryPoint({Key? key, this.initialIndex = 0}) : super(key: key);
   @override
   State<EntryPoint> createState() => _EntryPointState();
 }
@@ -17,23 +16,17 @@ class _EntryPointState extends State<EntryPoint> {
   final List _pages = const [
     HomeScreen(),
     CategoriesScreen(),
-    WishlistScreen(),
-    HomeScreen(),
     HomeScreen(),
     StoreEntryPage(),
     BlogHomePage(),
-    //DiscoverScreen(),
-    //BookmarkScreen(),
-    // EmptyCartScreen(), // if Cart is empty
-    //CartScreen(),
-    //ProfileScreen(),
   ];
-  int _currentIndex = 0;
+  late int _currentIndex;
   String _username = ""; // Variabel untuk menyimpan nama pengguna
 
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex;
     _loadUserName();
   }
 
@@ -41,7 +34,8 @@ class _EntryPointState extends State<EntryPoint> {
   Future<void> _loadUserName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _username = prefs.getString('username') ?? "Guest"; // Default "Guest" jika tidak ditemukan
+      _username = prefs.getString('username') ??
+          "Guest"; // Default "Guest" jika tidak ditemukan
     });
   }
 
@@ -66,7 +60,7 @@ class _EntryPointState extends State<EntryPoint> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16),
           child: GestureDetector(
-            child: Image.asset(
+             child: Image.asset(
               "assets/logo/Logo.png", // Ganti dengan logo lokal
               height: 40,
               fit: BoxFit.contain,
@@ -86,21 +80,33 @@ class _EntryPointState extends State<EntryPoint> {
             ),
           ],
         ),
-         actions: [
-          IconButton(
-            onPressed: () {
-              // Logika logout, misalnya:
-              // context.read<AuthenticationProvider>().logout();
-              Navigator.pushReplacementNamed(
-                  context, '/login'); // Sesuaikan rute login
-            },
-            icon: SvgPicture.asset(
-              "assets/icons/Logout.svg", // Ganti dengan ikon logout jika ada
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                  Theme.of(context).textTheme.bodyLarge!.color!,
-                  BlendMode.srcIn),
-            ),
+        actions: [
+          Row(
+            children: [
+              Text(
+                "Hello, $_username 👋🏻", // Ganti dengan nama pengguna dinamis
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  // Logika logout, misalnya:
+                  // context.read<AuthenticationProvider>().logout();
+                  Navigator.pushReplacementNamed(
+                      context, '/login'); // Sesuaikan rute login
+                },
+                icon: SvgPicture.asset(
+                  "assets/icons/Logout.svg", // Ganti dengan ikon logout jika ada
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                      Theme.of(context).textTheme.bodyLarge!.color!,
+                      BlendMode.srcIn),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -136,35 +142,32 @@ class _EntryPointState extends State<EntryPoint> {
           // selectedLabelStyle: TextStyle(color: primaryColor),
           selectedFontSize: 12,
           selectedItemColor: primaryColor,
-          unselectedItemColor: Colors.transparent,
+          unselectedItemColor: Colors.grey,
           items: [
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Shop.svg"),
-              activeIcon: svgIcon("assets/icons/Shop.svg", color: primaryColor),
-              label: "Shop",
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home, color: primaryColor),
+              label: "Home",
             ),
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Category.svg"),
-              activeIcon:
-                  svgIcon("assets/icons/Category.svg", color: primaryColor),
+              icon: Icon(Icons.category_outlined),
+              activeIcon: Icon(Icons.category, color: primaryColor),
               label: "Products",
             ),
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Bookmark.svg"),
-              activeIcon:
-                  svgIcon("assets/icons/Bookmark.svg", color: primaryColor),
-              label: "Bookmark",
+              icon: Icon(Icons.bookmark_outline),
+              activeIcon: Icon(Icons.bookmark, color: primaryColor),
+              label: "Wishlist",
             ),
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Bag.svg"),
-              activeIcon: svgIcon("assets/icons/Bag.svg", color: primaryColor),
-              label: "Cart",
+              icon: Icon(Icons.storefront_outlined),
+              activeIcon: Icon(Icons.storefront, color: primaryColor),
+              label: "Merchant",
             ),
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Profile.svg"),
-              activeIcon:
-                  svgIcon("assets/icons/Profile.svg", color: primaryColor),
-              label: "Profile",
+              icon: Icon(Icons.article_outlined),
+              activeIcon: Icon(Icons.article, color: primaryColor),
+              label: "Articles",
             ),
           ],
         ),

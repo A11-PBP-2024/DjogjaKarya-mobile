@@ -1,9 +1,6 @@
 // lib/widgets/product_card.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart';
-import 'package:shop/services/wishlist_service.dart';
 import '/models/product.dart';
 import '/screens/products/product_details_screen.dart';
 
@@ -14,20 +11,18 @@ class ProductCard extends StatefulWidget {
   final VoidCallback onEdit;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.isAdmin,
     required this.onDelete,
     required this.onEdit,
-  }) : super(key: key);
+  });
 
   @override
   _ProductCardState createState() => _ProductCardState();
 }
 
 class _ProductCardState extends State<ProductCard> {
-  late WishlistService wishlistService;
-
   bool isInWishlist = false; // Status wishlist
 
   String formatPrice(int price) {
@@ -41,67 +36,17 @@ class _ProductCardState extends State<ProductCard> {
     return name.length > 20 || name.contains('\n');
   }
 
-  Future<void> _checkWishlistStatus() async {
-    try {
-      final wishlistItems = await wishlistService.fetchWishlist();
-      setState(() {
-        isInWishlist =
-            wishlistItems.any((wl) => wl.product == widget.product.id);
-      });
-    } catch (e) {
-      // Handle error if needed
-    }
-  }
-
-  void toggleWishlist() async {
-    try {
-      if (!isInWishlist) {
-        //klo isInWishlist == false = belum ada di wishlist brrti ditambahin
-        final success = await wishlistService.addToWishlist(widget.product.id);
-        if (!success) throw Exception('Failed to add to wishlist');
-        setState(() {
-          isInWishlist = true;
-        });
-      } else {
-        //klo isInWishlist == true = sudah ada di wishlist brrti dihapus
-        final success =
-            await wishlistService.removeFromWishlist(widget.product.id);
-        if (!success) throw Exception('Failed to remove from wishlist');
-        setState(() {
-          isInWishlist = false;
-        });
-      }
-    } catch (e) {
-      // Kembalikan status jika gagal
-      // setState(() {
-      //   isInWishlist = !isInWishlist; // Rollback if the operation fails
-      // });
+  void toggleWishlist() {
+    setState(() {
+      isInWishlist = !isInWishlist;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update wishlist')),
+        SnackBar(
+          content: Text(
+              isInWishlist ? 'Added to Wishlist' : 'Removed from Wishlist'),
+          duration: const Duration(seconds: 1),
+        ),
       );
-      return;
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content:
-            Text(isInWishlist ? 'Added to Wishlist' : 'Removed from Wishlist'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    final request = Provider.of<CookieRequest>(context, listen: false);
-    final sessionId = request.cookies['sessionid'];
-    final csrfToken = request.cookies['csrftoken'];
-    wishlistService = WishlistService(
-        baseUrl: "http://10.0.2.2:8000",
-        token: csrfToken!.value,
-        sessionid: sessionId!.value);
-    _checkWishlistStatus();
-
-    super.initState();
+    });
   }
 
   @override
@@ -132,10 +77,6 @@ class _ProductCardState extends State<ProductCard> {
 
             if (shouldRefresh == true) {
               widget.onEdit();
-            }else{
-              setState(() {
-                _checkWishlistStatus();
-              });
             }
           },
           child: Column(
