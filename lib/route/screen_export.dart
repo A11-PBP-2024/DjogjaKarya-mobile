@@ -11,3 +11,8 @@ export '/screens/products/add_product_screen.dart';
 export '/screens/products/category_products_screen.dart';
 export '/screens/products/category_screen.dart';
 export '/screens/products/edit_product_screen.dart';
+
+export '/screens/article/add_article.dart';
+export '/screens/article/article_detail.dart';
+export '/screens/article/edit_article.dart';
+export '/screens/article/homepage_article.dart';
