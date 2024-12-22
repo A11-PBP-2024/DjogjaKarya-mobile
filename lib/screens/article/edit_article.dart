@@ -1,61 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import '/models/article.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import '/models/article.dart';
+import 'dart:convert';
 
-class EditArticleScreen extends StatefulWidget {
+class EditArticleFormPage extends StatefulWidget {
   final Article article;
 
-  const EditArticleScreen({super.key, required this.article});
+  const EditArticleFormPage({super.key, required this.article});
 
   @override
-  _EditArticleScreenState createState() => _EditArticleScreenState();
+  _EditArticleFormPageState createState() => _EditArticleFormPageState();
 }
 
-class _EditArticleScreenState extends State<EditArticleScreen> {
+class _EditArticleFormPageState extends State<EditArticleFormPage> {
   final _formKey = GlobalKey<FormState>();
-  late String title;
-  late String description;
-  late String content;
-  late String tags;
-  late String image;
+  late String _title;
+  late String _description;
+  late String _content;
+  late String _tags;
+  late String _image;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    title = widget.article.title;
-    description = widget.article.description;
-    content = widget.article.content;
-    tags = widget.article.tags;
-    image = widget.article.image;
+    _title = widget.article.title;
+    _description = widget.article.description;
+    _content = widget.article.content;
+    _tags = widget.article.tags;
+    _image = widget.article.image;
   }
 
   Future<void> editArticle() async {
-    final response = await http.post(
-      Uri.parse(
-          'http://127.0.0.1:8000/article/edit-article-flutter/${widget.article.id}/'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'title': title,
-        'description': description,
-        'content': content,
-        'tags': tags,
-        'image': image,
+    final request = context.read<CookieRequest>();
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final response = await request.post(
+      'http://127.0.0.1:8000/article/edit-article-flutter/${widget.article.id}/',
+      jsonEncode({
+        'title': _title,
+        'description': _description,
+        'content': _content,
+        'tags': _tags,
+        'image': _image,
       }),
     );
 
-    if (response.statusCode == 200) {
+    if (response['status'] == 'success') {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Article updated successfully!')),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update article.')),
+        SnackBar(
+          content: Text(response['message'] ?? 'Failed to update article.'),
+        ),
       );
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -63,54 +73,83 @@ class _EditArticleScreenState extends State<EditArticleScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Article'),
+        backgroundColor: Colors.blue[800],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                initialValue: title,
-                decoration: const InputDecoration(labelText: 'Title'),
-                onChanged: (value) => title = value,
-                validator: (value) =>
-                    value!.isEmpty ? 'Title cannot be empty' : null,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    TextFormField(
+                      initialValue: _title,
+                      decoration: const InputDecoration(
+                        labelText: 'Title',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => _title = value,
+                      validator: (value) =>
+                          value!.isEmpty ? 'Title cannot be empty' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      initialValue: _description,
+                      decoration: const InputDecoration(
+                        labelText: 'Description',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => _description = value,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      initialValue: _content,
+                      decoration: const InputDecoration(
+                        labelText: 'Content',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => _content = value,
+                      maxLines: 5,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      initialValue: _tags,
+                      decoration: const InputDecoration(
+                        labelText: 'Tags',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => _tags = value,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      initialValue: _image,
+                      decoration: const InputDecoration(
+                        labelText: 'Image URL',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => _image = value,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          editArticle();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[800],
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text(
+                        'Save Changes',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              TextFormField(
-                initialValue: description,
-                decoration: const InputDecoration(labelText: 'Description'),
-                onChanged: (value) => description = value,
-              ),
-              TextFormField(
-                initialValue: content,
-                decoration: const InputDecoration(labelText: 'Content'),
-                onChanged: (value) => content = value,
-                maxLines: 5,
-              ),
-              TextFormField(
-                initialValue: tags,
-                decoration: const InputDecoration(labelText: 'Tags'),
-                onChanged: (value) => tags = value,
-              ),
-              TextFormField(
-                initialValue: image,
-                decoration: const InputDecoration(labelText: 'Image URL'),
-                onChanged: (value) => image = value,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    editArticle();
-                  }
-                },
-                child: const Text('Save Changes'),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
