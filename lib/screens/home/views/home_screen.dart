@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '/screens/products/category_screen.dart';
-import '/screens/auth/views/login_screen.dart';
+import 'package:shop/entry_point.dart';
+// import '/screens/products/category_screen.dart';
 import '/screens/products/category_products_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '/screens/home/views/carousel.dart';
@@ -15,46 +14,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isAuthenticated = false;
-  bool isAdmin = false;
   late CookieRequest request;
 
   @override
   void initState() {
     super.initState();
     request = context.read<CookieRequest>();
-    _loadLoginStatus();
   }
 
-  Future<void> _loadLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    final isAdminStatus = prefs.getBool('isAdmin') ?? false;
-
-    setState(() {
-      isAuthenticated = isLoggedIn;
-      isAdmin = isAdminStatus;
-    });
-
-    if (isLoggedIn) {
-      _refreshLoginStatus();
-    }
-  }
-
-  Future<void> _refreshLoginStatus() async {
-    if (request.loggedIn) {
-      final prefs = await SharedPreferences.getInstance();
-      bool isAdminStatus = request.jsonData['is_admin'] ?? false;
-
-      await prefs.setBool('isLoggedIn', true);
-      await prefs.setBool('isAdmin', isAdminStatus);
-
-      setState(() {
-        isAuthenticated = true;
-        isAdmin = isAdminStatus;
-      });
-    } 
-  }
   Widget _networkImageWithLoader({
     required String imageUrl,
     double? width,
@@ -130,8 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: _networkImageWithLoader(
-                      imageUrl: 'https://i.imgur.com/ZXQEDdn.png',
+                    child: Image.asset(
+                      'assets/images/jogja.png', // Path ke gambar di dalam folder assets
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -155,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDiscoverSection(BuildContext context) {
-    final request = context.watch<CookieRequest>();
     return Container(
       color: const Color(0xFF716969),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -181,21 +147,13 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              if (request.loggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CategoriesScreen(),
-                  ),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                );
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EntryPoint(
+                      initialIndex: 1), // 1 adalah indeks CategoriesScreen
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFE38E27),
@@ -205,9 +163,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text(
-              request.loggedIn ? 'Explore Now!' : 'Login Now',
-              style: const TextStyle(
+            child: const Text(
+              'Explore Now!',
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -218,28 +176,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryItem(String name, String imageUrl, BuildContext context) {
-    final request = context.watch<CookieRequest>();
+  Widget _buildCategoryItem(
+      String name, String imageUrl, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (request.loggedIn) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CategoryProductsScreen(
-                categoryName: name,
-                isAdmin: isAdmin,
-              ),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoryProductsScreen(
+              categoryName: name,
+              isAdmin: false, // Role tidak relevan lagi
             ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-          );
-        }
+          ),
+        );
       },
       child: Container(
         width: 300,
@@ -266,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 fit: BoxFit.cover,
               ),
             ),
-            
+
             // Gradient Overlay
             Container(
               decoration: BoxDecoration(
@@ -281,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            
+
             // Content
             Positioned(
               bottom: 16,
@@ -292,7 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // Category Name
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -383,7 +333,8 @@ class _HomeScreenState extends State<HomeScreen> {
         // Section Header
         Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Center( // Wrap dengan Center
+          child: Center(
+            // Wrap dengan Center
             child: Column(
               children: [
                 Text(
@@ -406,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        
+
         // Scrollable Categories
         SizedBox(
           height: 180,
@@ -430,22 +381,28 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildExperienceSection(BuildContext context) {
     final experienceItems = [
       {
-        'image': 'https://jogjapasaraya.com/wp-content/uploads/2024/02/JOGJA-PASARAYA-770-x-960.webp',
+        'image':
+            'https://jogjapasaraya.com/wp-content/uploads/2024/02/JOGJA-PASARAYA-770-x-960.webp',
       },
       {
-        'image': 'https://jogjapasaraya.com/wp-content/uploads/2024/03/DSC_0173-scaled.webp',
+        'image':
+            'https://jogjapasaraya.com/wp-content/uploads/2024/03/DSC_0173-scaled.webp',
       },
       {
-        'image': 'https://jogjapasaraya.com/wp-content/uploads/2024/03/Oleh-Oleh-Yogyakarta-Jogja-Pasaraya.jpg',
+        'image':
+            'https://jogjapasaraya.com/wp-content/uploads/2024/03/Oleh-Oleh-Yogyakarta-Jogja-Pasaraya.jpg',
       },
       {
-        'image': 'https://i.pinimg.com/736x/49/d4/49/49d44964bb1c30ca04aaea2deb0b7fc1.jpg',
+        'image':
+            'https://i.pinimg.com/736x/49/d4/49/49d44964bb1c30ca04aaea2deb0b7fc1.jpg',
       },
       {
-        'image': 'https://i.pinimg.com/736x/ee/cf/7f/eecf7f0c4a0cbf046919b5f4f81c3b14.jpg',
+        'image':
+            'https://i.pinimg.com/736x/ee/cf/7f/eecf7f0c4a0cbf046919b5f4f81c3b14.jpg',
       },
       {
-        'image': 'https://i.pinimg.com/736x/78/0f/1d/780f1d057d3b55b94051519e2bcde650.jpg',
+        'image':
+            'https://i.pinimg.com/736x/78/0f/1d/780f1d057d3b55b94051519e2bcde650.jpg',
       },
     ];
 
