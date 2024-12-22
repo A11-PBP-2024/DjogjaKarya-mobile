@@ -31,7 +31,7 @@ class _StoreEntryPageState extends State<StoreEntryPage> {
   Future<void> _fetchInitialData() async {
     try {
       // Fetch admin status separately
-      final userResponse = await request.get('http://localhost:8000/merchant/get-user-status/');
+      final userResponse = await request.get('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/merchant/get-user-status/');
       setState(() {
         _isAdmin = userResponse['is_admin'] ?? false;
       });
@@ -45,7 +45,7 @@ class _StoreEntryPageState extends State<StoreEntryPage> {
 
   Future<void> fetchStore(CookieRequest request) async {
     try {
-      final response = await request.get('http://localhost:8000/merchant/get-stores/');
+      final response = await request.get('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/merchant/get-stores/');
       setState(() {
         _allStores = [];
         for (var d in response) {

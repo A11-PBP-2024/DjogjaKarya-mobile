@@ -306,7 +306,7 @@ class StoreCard extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 final response = await request.post(
-                  'http://localhost:8000/merchant/delete-flutter/${store.pk}/',
+                  'https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/merchant/delete-flutter/${store.pk}/',
                   {},
                 );
                 if (response['status'] == 'success') {

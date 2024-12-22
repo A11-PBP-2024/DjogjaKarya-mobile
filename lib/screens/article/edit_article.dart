@@ -40,7 +40,7 @@ class _EditArticleFormPageState extends State<EditArticleFormPage> {
     });
 
     final response = await request.post(
-      'http://127.0.0.1:8000/article/edit-article-flutter/${widget.article.id}/',
+      'https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/article/edit-article-flutter/${widget.article.id}/',
       jsonEncode({
         'title': _title,
         'description': _description,

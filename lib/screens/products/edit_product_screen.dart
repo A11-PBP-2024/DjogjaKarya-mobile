@@ -39,7 +39,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     final request = context.read<CookieRequest>();
     try {
       final response =
-          await request.get('http://localhost:8000/product/get-form-data/');
+          await request.get('https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/get-form-data/');
       setState(() {
         categories = List<String>.from(response['categories']);
         stores = List<String>.from(response['stores']);
@@ -257,7 +257,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     if (_formKey.currentState!.validate()) {
                       try {
                         final response = await request.post(
-                          "http://localhost:8000/product/edit-product-flutter/${widget.product.id}/",
+                          "https://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/product/edit-product-flutter/${widget.product.id}/",
                           {
                             'name': _name,
                             'kategori': _kategori,
