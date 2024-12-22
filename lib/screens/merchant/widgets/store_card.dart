@@ -375,18 +375,36 @@ class StoreCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.calendar_today, size: 16, color: primaryMaterialColor[600]),
-                      const SizedBox(width: 4),
-                      Text(
-                        store.fields.opening_days,
-                        style: TextStyle(color: Colors.grey[600]),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today, size: 16, color: primaryMaterialColor[600]),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                store.fields.opening_days,
+                                style: TextStyle(color: Colors.grey[600]),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 16),
-                      Icon(Icons.access_time, size: 16, color: primaryMaterialColor[600]),
-                      const SizedBox(width: 4),
-                      Text(
-                        store.fields.opening_hours,
-                        style: TextStyle(color: Colors.grey[600]),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time, size: 16, color: primaryMaterialColor[600]),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                store.fields.opening_hours,
+                                style: TextStyle(color: Colors.grey[600]),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

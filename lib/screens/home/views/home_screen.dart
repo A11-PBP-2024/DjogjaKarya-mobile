@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '/screens/products/category_screen.dart';
-import '/screens/auth/views/login_screen.dart';
+import 'package:shop/entry_point.dart';
+// import '/screens/products/category_screen.dart';
 import '/screens/products/category_products_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '/screens/home/views/carousel.dart';
@@ -15,46 +14,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isAuthenticated = false;
-  bool isAdmin = false;
   late CookieRequest request;
 
   @override
   void initState() {
     super.initState();
     request = context.read<CookieRequest>();
-    _loadLoginStatus();
   }
 
-  Future<void> _loadLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    final isAdminStatus = prefs.getBool('isAdmin') ?? false;
-
-    setState(() {
-      isAuthenticated = isLoggedIn;
-      isAdmin = isAdminStatus;
-    });
-
-    if (isLoggedIn) {
-      _refreshLoginStatus();
-    }
-  }
-
-  Future<void> _refreshLoginStatus() async {
-    if (request.loggedIn) {
-      final prefs = await SharedPreferences.getInstance();
-      bool isAdminStatus = request.jsonData['is_admin'] ?? false;
-
-      await prefs.setBool('isLoggedIn', true);
-      await prefs.setBool('isAdmin', isAdminStatus);
-
-      setState(() {
-        isAuthenticated = true;
-        isAdmin = isAdminStatus;
-      });
-    } 
-  }
   Widget _networkImageWithLoader({
     required String imageUrl,
     double? width,
@@ -155,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDiscoverSection(BuildContext context) {
-    final request = context.watch<CookieRequest>();
     return Container(
       color: const Color(0xFF716969),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -181,21 +147,12 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              if (request.loggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CategoriesScreen(),
-                  ),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                );
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EntryPoint(initialIndex: 1), // 1 adalah indeks CategoriesScreen
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFE38E27),
@@ -205,9 +162,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text(
-              request.loggedIn ? 'Explore Now!' : 'Login Now',
-              style: const TextStyle(
+            child: const Text(
+              'Explore Now!',
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -219,27 +176,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategoryItem(String name, String imageUrl, BuildContext context) {
-    final request = context.watch<CookieRequest>();
     return GestureDetector(
-      onTap: () {
-        if (request.loggedIn) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CategoryProductsScreen(
-                categoryName: name,
-                isAdmin: isAdmin,
-              ),
+     onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoryProductsScreen(
+              categoryName: name,
+              isAdmin: false, // Role tidak relevan lagi
             ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-          );
-        }
+          ),
+        );
       },
       child: Container(
         width: 300,

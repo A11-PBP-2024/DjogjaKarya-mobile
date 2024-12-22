@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class EntryPoint extends StatefulWidget {
-  const EntryPoint({super.key});
-
+  final int initialIndex;
+  const EntryPoint({Key? key, this.initialIndex = 0}) : super(key: key);
   @override
   State<EntryPoint> createState() => _EntryPointState();
 }
@@ -21,12 +21,13 @@ class _EntryPointState extends State<EntryPoint> {
     StoreEntryPage(),
     HomeScreen(),
   ];
-  int _currentIndex = 0;
+  late int _currentIndex;
   String _username = ""; // Variabel untuk menyimpan nama pengguna
 
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex; 
     _loadUserName();
   }
 
