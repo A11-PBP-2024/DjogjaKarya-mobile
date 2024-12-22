@@ -1,6 +1,7 @@
 [![Build status](https://build.appcenter.ms/v0.1/apps/374f4913-8c68-41d9-925e-7df0fd6c672c/branches/main/badge)](https://appcenter.ms)
 
-Link app: https://install.appcenter.ms/sign-in?original_url=install:/%2Forgs%2FA11-PBP-2024%2Fapps%2FDjogjaKarya-Mobile-1%2Freleases%2F2%3Fsource%3Demail#x3D;email&tid=w-M820sBI-
+Link app: https://install.appcenter.ms/orgs/a11-pbp-2024/apps/djogjakarya-mobile-1/distribution_groups/public
+
 # DjogjaKarya
 <img width="1710" alt="image" src="https://github.com/user-attachments/assets/61527e84-3cd4-46f7-8bed-e59ddaf265fb">
 
