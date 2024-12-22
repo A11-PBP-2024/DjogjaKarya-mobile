@@ -294,6 +294,6 @@ class _WishlistProductCardState extends State<WishlistProductCard> {
               child: Text("Gagal"),
             );
           }
-        });
-  }
+ });
+}
 }

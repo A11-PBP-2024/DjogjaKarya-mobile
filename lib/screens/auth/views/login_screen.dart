@@ -82,14 +82,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  Align(
-                    child: TextButton(
-                      child: const Text("Forgot password"),
-                      onPressed: () {
-                        Navigator.pushNamed(context, passwordRecoveryScreenRoute);
-                      },
-                    ),
-                  ),
                   SizedBox(
                     height: size.height > 700 ? size.height * 0.1 : defaultPadding,
                   ),

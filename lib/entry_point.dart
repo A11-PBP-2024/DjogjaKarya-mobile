@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/route/screen_export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/wishlist/wishlist_screen.dart';
 
 class EntryPoint extends StatefulWidget {
   final int initialIndex;
@@ -16,7 +17,7 @@ class _EntryPointState extends State<EntryPoint> {
   final List _pages = const [
     HomeScreen(),
     CategoriesScreen(),
-    HomeScreen(),
+    WishlistScreen(),
     StoreEntryPage(),
     BlogHomePage(),
   ];
@@ -83,14 +84,6 @@ class _EntryPointState extends State<EntryPoint> {
         actions: [
           Row(
             children: [
-              Text(
-                "Hello, $_username 👋🏻", // Ganti dengan nama pengguna dinamis
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              ),
               IconButton(
                 onPressed: () {
                   // Logika logout, misalnya:
