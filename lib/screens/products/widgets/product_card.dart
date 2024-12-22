@@ -11,12 +11,12 @@ class ProductCard extends StatefulWidget {
   final VoidCallback onEdit;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.isAdmin,
     required this.onDelete,
     required this.onEdit,
-  }) : super(key: key);
+  });
 
   @override
   _ProductCardState createState() => _ProductCardState();

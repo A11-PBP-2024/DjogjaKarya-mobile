@@ -61,3 +61,12 @@ const String thanksForOrderScreenRoute = "thanks_order";
 
 // tambahin ya
 const String entryPointRoute = '/entry-point';
+const String addProductScreenRoute = '/add-product-screen';
+const String categoryProductsScreenRoute = '/category-products-screen';
+const String categoryScreenRoute = '/category-screen';
+const String editProductScreenRoute = '/edit-product-screen';
+const String addArticleRoute = '/add-article';
+const String articleDetailRoute = '/article-detail';
+const String editArticleRoute = '/edit-article';
+const String homepageArticleRoute = '/homepage-article';
+const String ArticleScreenRoute = '/article-screen';

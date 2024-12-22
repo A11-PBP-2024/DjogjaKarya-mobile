@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '/models/product.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart';
 import '/screens/products/edit_product_screen.dart';
 import '/services/api_service.dart';
 import '/screens/products/widgets/product_card.dart';
+import '/screens/review/review_list.dart'; // Import halaman ReviewListPage
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -13,11 +12,11 @@ class ProductDetailScreen extends StatefulWidget {
   final Function()? onEdit;
 
   const ProductDetailScreen({
-    Key? key,
+    super.key,
     required this.product,
     this.isAdmin = false,
     this.onEdit,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -40,12 +39,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       final products = await apiService.fetchProducts(
         kategori: widget.product.kategori,
       );
-      
+
       final filteredProducts = products
           .where((p) => p.id != widget.product.id)
           .toList()
         ..shuffle();
-      
+
       setState(() {
         similarProducts = filteredProducts.take(5).toList();
         isLoading = false;
@@ -60,8 +59,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String formatPrice(int price) {
     final formatter = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
     return price.toString().replaceAllMapped(
-      formatter, 
-      (Match m) => '${m[1]}.'
+      formatter,
+      (Match m) => '${m[1]}.',
     );
   }
 
@@ -71,9 +70,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            isInWishlist 
-              ? 'Added to wishlist' 
-              : 'Removed from wishlist'
+            isInWishlist ? 'Added to wishlist' : 'Removed from wishlist',
           ),
           duration: const Duration(seconds: 1),
         ),
@@ -122,7 +119,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
-            
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -171,7 +167,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
                   const Text(
                     'Review',
                     style: TextStyle(
@@ -179,34 +174,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Row(
-                        children: List.generate(5, (index) {
-                          return Icon(
-                            Icons.star,
-                            size: 24,
-                            color: Colors.grey[400],
-                          );
-                        }),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '(0)',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                  const SizedBox(height: 16),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReviewListPage(
+                              productId: widget.product.id,
+                              productName: widget.product.name, 
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 24,
                         ),
+                        backgroundColor: const Color(0xFFF3A73B),
                       ),
-                    ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            "See Reviews",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-
-            // Similar Products Section
             if (similarProducts.isNotEmpty) ...[
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -227,8 +231,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   itemBuilder: (context, index) => ProductCard(
                     product: similarProducts[index],
                     isAdmin: widget.isAdmin,
-                    onDelete: () {}, // Empty callback since it's not needed for similar products
-                    onEdit: () {}, // Empty callback since it's not needed for similar products
+                    onDelete: () {},
+                    onEdit: () {},
                   ),
                 ),
               ),
@@ -250,61 +254,64 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: SafeArea(
           child: SizedBox(
             width: double.infinity,
-            child: widget.isAdmin 
-              ? ElevatedButton(
-                  onPressed: _handleEdit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown[700],
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+            child: widget.isAdmin
+                ? ElevatedButton(
+                    onPressed: _handleEdit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown[700],
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.edit, color: Colors.white, size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          'Edit Product',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ElevatedButton(
+                    onPressed: toggleWishlist,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          isInWishlist ? Colors.grey[300] : Colors.brown[700],
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isInWishlist
+                              ? Icons.favorite
+                              : Icons.favorite_outline,
+                          color: isInWishlist ? Colors.red : Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          isInWishlist
+                              ? 'Added to Wishlist'
+                              : 'Add to Wishlist',
+                          style: TextStyle(
+                            color: isInWishlist
+                                ? Colors.black87
+                                : Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Edit Product',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : ElevatedButton(
-                  onPressed: toggleWishlist,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isInWishlist ? Colors.grey[300] : Colors.brown[700],
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        isInWishlist ? Icons.favorite : Icons.favorite_outline,
-                        color: isInWishlist ? Colors.red : Colors.white,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        isInWishlist ? 'Added to Wishlist' : 'Add to Wishlist',
-                        style: TextStyle(
-                          color: isInWishlist ? Colors.black87 : Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
           ),
         ),
       ),

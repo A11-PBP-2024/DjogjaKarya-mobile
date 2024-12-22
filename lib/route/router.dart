@@ -150,7 +150,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //   return MaterialPageRoute(
     //     builder: (context) => const CategoriesScreen(),
     //   );
-   
+
+    case cartScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const StoreEntryPage(),
+    );
    
     case discoverScreenRoute:
       return MaterialPageRoute(
@@ -160,6 +164,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case entryPointScreenRoute:
       return MaterialPageRoute(
         builder: (context) => const EntryPoint(),
+      );
+
+    case ArticleScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const BlogHomePage(),
       );
 
     // case currentPasswordScreenRoute:

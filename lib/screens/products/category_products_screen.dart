@@ -13,10 +13,10 @@ class CategoryProductsScreen extends StatefulWidget {
   final bool isAdmin;
 
   const CategoryProductsScreen({
-    Key? key,
+    super.key,
     required this.categoryName,
     required this.isAdmin,
-  }) : super(key: key);
+  });
 
   @override
   State<CategoryProductsScreen> createState() => _CategoryProductsScreenState();
@@ -291,7 +291,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddProductScreen(),
+        builder: (context) => const AddProductScreen(),
       ),
     );
 
