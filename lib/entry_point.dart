@@ -66,8 +66,8 @@ class _EntryPointState extends State<EntryPoint> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16),
           child: GestureDetector(
-            child: Image.network(
-              "https://i.imgur.com/Iu7BTnD.png", // Path logo
+            child: Image.asset(
+              "assets/logo/Logo.png", // Ganti dengan logo lokal
               height: 40,
               fit: BoxFit.contain,
             ),
@@ -86,26 +86,21 @@ class _EntryPointState extends State<EntryPoint> {
             ),
           ],
         ),
-        actions: [
-          Row(
-            children: [
-              Text(
-                "Hello, $_username 👋🏻", // Ganti dengan nama pengguna dinamis
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 8),
-              const CircleAvatar(
-                radius: 16,
-                backgroundImage: NetworkImage(
-                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png", // URL gambar profil pengguna
-                ),
-              ),
-              const SizedBox(width: 16),
-            ],
+         actions: [
+          IconButton(
+            onPressed: () {
+              // Logika logout, misalnya:
+              // context.read<AuthenticationProvider>().logout();
+              Navigator.pushReplacementNamed(
+                  context, '/login'); // Sesuaikan rute login
+            },
+            icon: SvgPicture.asset(
+              "assets/icons/Logout.svg", // Ganti dengan ikon logout jika ada
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                  Theme.of(context).textTheme.bodyLarge!.color!,
+                  BlendMode.srcIn),
+            ),
           ),
         ],
       ),
