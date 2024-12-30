@@ -103,7 +103,7 @@ Fitur ini memungkinkan admin untuk mengelola semua informasi produk yang ada di 
 
 
 ## 🔗 Link Deployemnet
-http://fauzan-putra31-djogjakarya.pbp.cs.ui.ac.id/
+http://fauzan-putra31-djogjakarya1.pbp.cs.ui.ac.id/
 
 ## 🔗 Link Dataset
 https://docs.google.com/spreadsheets/d/1TRI-ySJPl8-Z4J7OobiPfDs0FSshw3zxEH8qmNUL3Xw/edit?gid=0#gid=0
